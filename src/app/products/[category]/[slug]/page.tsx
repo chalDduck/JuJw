@@ -9,6 +9,15 @@ import { getSiteUrl } from '@/lib/env'
 
 export const dynamic = 'force-dynamic'
 
+// 동적 경로 세그먼트가 퍼센트 인코딩(예: 한글 슬러그)된 채로 전달될 수 있어 안전하게 디코드합니다.
+function decodeParam(value: string): string {
+  try {
+    return decodeURIComponent(value)
+  } catch {
+    return value
+  }
+}
+
 const GENERIC_PRODUCT_PLACEHOLDER = '/img/hero/hero.png'
 
 const categoryFallbackImages: Record<string, string[]> = {
@@ -23,7 +32,7 @@ export async function generateMetadata({
 }: {
   params: { category: string; slug: string }
 }): Promise<Metadata> {
-  const product = await getProductBySlug(params.category, params.slug)
+  const product = await getProductBySlug(decodeParam(params.category), decodeParam(params.slug))
 
   if (!product) {
     return {
@@ -45,7 +54,9 @@ export default async function ProductDetailPage({
 }: {
   params: { category: string; slug: string }
 }) {
-  const product = await getProductBySlug(params.category, params.slug)
+  const category = decodeParam(params.category)
+  const slug = decodeParam(params.slug)
+  const product = await getProductBySlug(category, slug)
 
   if (!product) {
     notFound()

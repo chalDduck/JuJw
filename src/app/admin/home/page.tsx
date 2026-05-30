@@ -1,7 +1,7 @@
 'use client'
 
 
-import { FormEvent, useEffect, useMemo, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { ExternalLink, Save } from 'lucide-react'
 import { DEFAULT_SITE_SETTINGS } from '@/lib/site-settings'
@@ -163,15 +163,9 @@ const textareaClass =
 
 export default function AdminHomePage() {
   const [settings, setSettings] = useState<Settings>(DEFAULT_HOME_SETTINGS)
-  const [selectedId, setSelectedId] = useState(SECTIONS[0].id)
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [message, setMessage] = useState('')
-
-  const selectedSection = useMemo(
-    () => SECTIONS.find((section) => section.id === selectedId) ?? SECTIONS[0],
-    [selectedId]
-  )
 
   useEffect(() => {
     const load = async () => {
@@ -212,74 +206,37 @@ export default function AdminHomePage() {
     setIsSaving(false)
   }
 
+  if (isLoading) {
+    return <p className="mx-auto max-w-2xl p-6 text-[16px] text-stone-500">불러오는 중입니다…</p>
+  }
+
   return (
-    <form className="lg:h-full lg:min-h-0" onSubmit={onSubmit}>
-      <div className="mb-3 flex flex-col gap-3 border-b border-stone-200 pb-3 sm:flex-row sm:items-center sm:justify-between lg:hidden">
-        <div>
-          <p className="text-sm font-semibold text-stone-500">홈페이지 편집</p>
-          <p className="text-[13px] leading-6 text-stone-500">저장 후 공개 홈에 바로 반영됩니다.</p>
-        </div>
-        <button
-          type="submit"
-          disabled={isSaving || isLoading}
-          className="inline-flex min-h-[50px] items-center justify-center gap-2 rounded-2xl bg-stone-900 px-5 text-[15px] font-semibold text-white transition active:translate-y-px disabled:opacity-60"
-        >
-          <Save size={17} />
-          {isSaving ? '저장 중' : '저장'}
-        </button>
-      </div>
+    <form className="mx-auto max-w-2xl pb-28" onSubmit={onSubmit}>
+      <Link
+        href="/"
+        target="_blank"
+        className="mb-4 inline-flex min-h-[46px] items-center gap-2 rounded-2xl border border-stone-300 bg-white px-4 text-[15px] font-semibold text-stone-700 transition hover:border-stone-400"
+      >
+        실제 홈페이지 미리보기
+        <ExternalLink size={16} />
+      </Link>
 
-      <div className="grid gap-4 lg:h-full lg:min-h-0 lg:grid-cols-[210px_minmax(0,1fr)_330px]">
-        <aside className="min-w-0 lg:min-h-0">
-          <div className="flex gap-2 overflow-x-auto pb-2 lg:block lg:h-full lg:overflow-y-auto lg:pb-0">
-            {SECTIONS.map((section) => (
-              <button
-                key={section.id}
-                type="button"
-                onClick={() => setSelectedId(section.id)}
-                className={`shrink-0 rounded-2xl border px-4 py-3 text-left transition active:translate-y-px lg:mb-2 lg:block lg:w-full ${
-                  selectedId === section.id
-                    ? 'border-stone-900 bg-stone-900 text-white'
-                    : 'border-stone-200 bg-white text-stone-700 hover:border-stone-400'
-                }`}
-              >
-                <span className="block text-[15px] font-semibold">{section.title}</span>
-                <span className={`mt-1 hidden text-[12px] leading-5 lg:block ${selectedId === section.id ? 'text-white/60' : 'text-stone-500'}`}>
-                  {section.fields.length}개 항목
-                </span>
-              </button>
-            ))}
-          </div>
-        </aside>
-
-        <section className="min-w-0 rounded-[24px] border border-stone-200 bg-white lg:min-h-0 lg:overflow-hidden">
-          <div className="flex items-start justify-between gap-3 border-b border-stone-200 px-4 py-4 sm:px-5">
-            <div className="min-w-0">
-              <h2 className="text-xl font-semibold tracking-tight text-stone-950">{selectedSection.title}</h2>
-              <p className="mt-1 text-[14px] leading-6 text-stone-500">{selectedSection.description}</p>
-            </div>
-            <button
-              type="submit"
-              disabled={isSaving || isLoading}
-              className="hidden min-h-[48px] shrink-0 items-center justify-center gap-2 rounded-2xl bg-stone-900 px-5 text-sm font-semibold text-white transition active:translate-y-px disabled:opacity-60 lg:inline-flex"
-            >
-              <Save size={16} />
-              {isSaving ? '저장 중' : '저장'}
-            </button>
-          </div>
-
-          {isLoading ? (
-            <p className="p-5 text-[15px] text-stone-500">불러오는 중입니다.</p>
-          ) : (
-            <div className="grid gap-4 p-4 sm:grid-cols-2 sm:p-5 lg:max-h-[calc(100dvh-185px)] lg:overflow-y-auto">
-              {selectedSection.fields.map((field) => (
-                <div key={field.key} className={field.multiline ? 'sm:col-span-2' : undefined}>
-                  <label className="mb-2 block text-[14px] font-semibold text-stone-800">{field.label}</label>
+      <div className="space-y-5">
+        {SECTIONS.map((section, index) => (
+          <section key={section.id} className="rounded-3xl border border-stone-200 bg-white p-5 sm:p-6">
+            <h2 className="text-[18px] font-bold tracking-tight text-stone-950">
+              {index + 1}. {section.title}
+            </h2>
+            <p className="mt-1 text-[14px] leading-6 text-stone-500">{section.description}</p>
+            <div className="mt-4 space-y-4">
+              {section.fields.map((field) => (
+                <div key={field.key}>
+                  <label className="mb-2 block text-[15px] font-semibold text-stone-800">{field.label}</label>
                   {field.multiline ? (
                     <textarea
                       value={settings[field.key] || ''}
                       onChange={(event) => updateSetting(field.key, event.target.value)}
-                      rows={3}
+                      rows={2}
                       className={textareaClass}
                     />
                   ) : (
@@ -289,84 +246,32 @@ export default function AdminHomePage() {
                       className={inputClass}
                     />
                   )}
-                  {field.helper ? <p className="mt-1 text-[12px] leading-5 text-stone-500">{field.helper}</p> : null}
+                  {field.helper ? <p className="mt-1.5 text-[13px] leading-5 text-stone-500">{field.helper}</p> : null}
                 </div>
               ))}
             </div>
-          )}
-        </section>
+          </section>
+        ))}
+      </div>
 
-        <aside className="min-w-0 rounded-[24px] border border-stone-200 bg-[#211a16] p-5 text-white lg:min-h-0 lg:overflow-y-auto">
-          <div className="flex items-center justify-between gap-3">
-            <h3 className="text-lg font-semibold tracking-tight">미리보기</h3>
-            <Link
-              href="/"
-              target="_blank"
-              className="inline-flex min-h-[38px] items-center gap-2 rounded-xl border border-white/10 px-3 text-xs font-semibold text-white/70 transition hover:bg-white/10 hover:text-white"
-            >
-              실제 홈
-              <ExternalLink size={14} />
-            </Link>
-          </div>
-
-          <div className="mt-5 space-y-5 text-sm leading-6">
-            <section className="border-b border-white/10 pb-5">
-              <p className="text-[11px] uppercase tracking-[0.22em] text-white/38">Hero</p>
-              <p className="mt-3 text-2xl font-semibold leading-tight">{settings.home_hero_line_1}</p>
-              <p className="text-2xl font-semibold leading-tight">{settings.home_hero_line_2}</p>
-              <p className="mt-3 inline-flex rounded-full bg-white px-3 py-1 text-xs font-semibold text-stone-950">
-                {settings.home_hero_cta}
-              </p>
-            </section>
-
-            <section className="border-b border-white/10 pb-5">
-              <p className="text-[11px] uppercase tracking-[0.22em] text-white/38">Benefits</p>
-              <div className="mt-3 space-y-3">
-                {[1, 2, 3, 4].map((number) => (
-                  <div key={number}>
-                    <p className="font-semibold">{settings[`home_benefit_${number}_title`]}</p>
-                    <p className="text-white/55">{settings[`home_benefit_${number}_description`]}</p>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            <section className="border-b border-white/10 pb-5">
-              <p className="text-[11px] uppercase tracking-[0.22em] text-white/38">{settings.home_collection_kicker}</p>
-              <p className="mt-2 text-xl font-semibold">{settings.home_collection_title}</p>
-              <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
-                {[
-                  ['home_collection_necklaces_title', 'home_collection_necklaces_subtitle'],
-                  ['home_collection_earrings_title', 'home_collection_earrings_subtitle'],
-                  ['home_collection_rings_title', 'home_collection_rings_subtitle'],
-                  ['home_collection_bracelets_title', 'home_collection_bracelets_subtitle'],
-                ].map(([titleKey, subtitleKey]) => (
-                  <div key={titleKey} className="rounded-xl bg-white/10 p-3">
-                    <p className="font-semibold">{settings[titleKey]}</p>
-                    <p className="text-white/55">{settings[subtitleKey]}</p>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            <section>
-              <p className="text-[11px] uppercase tracking-[0.22em] text-white/38">{settings.home_consult_kicker}</p>
-              <p className="mt-2 text-xl font-semibold leading-tight">{settings.home_consult_title_1}</p>
-              <p className="text-xl font-semibold leading-tight">{settings.home_consult_title_2}</p>
-              <p className="mt-3 text-white/60">{settings.home_consult_description}</p>
-            </section>
-          </div>
-
-          {message ? (
-            <p
-              className={`mt-5 rounded-2xl px-4 py-3 text-[13px] leading-6 ${
-                message.includes('실패') ? 'bg-red-500/15 text-red-100' : 'bg-emerald-500/15 text-emerald-100'
-              }`}
-            >
-              {message}
-            </p>
-          ) : null}
-        </aside>
+      <div className="sticky bottom-0 z-20 mt-5 -mx-4 border-t border-stone-200 bg-[#f3f0ea]/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+        {message ? (
+          <p
+            className={`mb-2 rounded-2xl px-4 py-2.5 text-[14px] ${
+              message.includes('실패') ? 'bg-red-50 text-red-700' : 'bg-emerald-50 text-emerald-700'
+            }`}
+          >
+            {message}
+          </p>
+        ) : null}
+        <button
+          type="submit"
+          disabled={isSaving}
+          className="inline-flex min-h-[58px] w-full items-center justify-center gap-2 rounded-2xl bg-stone-900 px-5 text-[17px] font-bold text-white transition active:translate-y-px disabled:opacity-60"
+        >
+          <Save size={19} />
+          {isSaving ? '저장 중…' : '저장하기'}
+        </button>
       </div>
     </form>
   )
