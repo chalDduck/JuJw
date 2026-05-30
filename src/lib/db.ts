@@ -1,4 +1,7 @@
-import { getCloudflareEnv, isProductionRuntime } from '@/lib/env'
+import 'server-only'
+
+import { getSupabaseAdmin } from '@/lib/supabase'
+import { hasSupabase, isProductionRuntime } from '@/lib/env'
 import type {
   Admin,
   Category,
@@ -12,6 +15,12 @@ import type {
   ProductImage,
   ProductInput,
 } from '@/lib/models'
+
+/* -------------------------------------------------------------------------- */
+/*  공통 타입 / 기본값                                                          */
+/* -------------------------------------------------------------------------- */
+
+type SettingsMap = Record<string, string>
 
 type ProductRecord = {
   id: number
@@ -27,46 +36,8 @@ type ProductRecord = {
   updatedAt: string
 }
 
-type InquiryRecord = {
-  id: number
-  companyName: string
-  phone: string
-  interest: string | null
-  message: string | null
-  status: InquiryStatus
-  ipAddress: string | null
-  createdAt: string
-  updatedAt: string
-}
-
-type NoticeRecord = {
-  id: number
-  title: string
-  content: string
-  isPublished: boolean
-  isPinned: boolean
-  createdAt: string
-  updatedAt: string
-}
-
-type SettingsMap = Record<string, string>
-
-type MemoryStore = {
-  categories: Category[]
-  products: ProductRecord[]
-  productImages: ProductImage[]
-  inquiries: InquiryRecord[]
-  settings: SettingsMap
-  notices: NoticeRecord[]
-  admins: Admin[]
-  counters: {
-    product: number
-    productImage: number
-    inquiry: number
-    notice: number
-    admin: number
-  }
-}
+type InquiryRecord = Inquiry & { ipAddress: string | null }
+type NoticeRecord = Notice
 
 const DEFAULT_SETTINGS: SettingsMap = {
   shop_name: 'JU JEWELRY',
@@ -141,99 +112,71 @@ const DEFAULT_CATEGORIES: Category[] = [
   { id: 4, name: '팔찌', slug: 'bracelets', orderIndex: 4 },
 ]
 
-const DEFAULT_PRODUCTS: ProductRecord[] = [
-  {
-    id: 1,
-    categoryId: 1,
-    name: '18K 솔리테어 반지',
-    slug: '18k-solitaire-ring',
-    spec: '0.3ct / 18K White Gold',
-    description: '세련된 밴드 라인의 솔리테어 반지입니다.',
-    isFeatured: true,
-    isPublished: true,
-    orderIndex: 1,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: 2,
-    categoryId: 2,
-    name: '사파이어 펜던트 목걸이',
-    slug: 'sapphire-pendant-necklace',
-    spec: '14K Gold / Natural Sapphire',
-    description: '은은한 컬러감의 사파이어 포인트 목걸이입니다.',
-    isFeatured: true,
-    isPublished: true,
-    orderIndex: 2,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: 3,
-    categoryId: 3,
-    name: '드롭 이어링',
-    slug: 'drop-earring',
-    spec: '18K Rose Gold / Diamond',
-    description: '데일리와 포멀 모두 어울리는 드롭 이어링입니다.',
-    isFeatured: false,
-    isPublished: true,
-    orderIndex: 3,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-]
+/* -------------------------------------------------------------------------- */
+/*  인메모리 fallback (Supabase 키가 없을 때만 사용)                            */
+/* -------------------------------------------------------------------------- */
 
-const DEFAULT_PRODUCT_IMAGES: ProductImage[] = [
-  {
-    id: 1,
-    productId: 1,
-    objectKey: null,
-    url: '/img/hero/hero.png',
-    altText: '18K 솔리테어 반지',
-    isPrimary: true,
-    orderIndex: 1,
-  },
-  {
-    id: 2,
-    productId: 2,
-    objectKey: null,
-    url: '/img/hero/hero.png',
-    altText: '사파이어 펜던트 목걸이',
-    isPrimary: true,
-    orderIndex: 1,
-  },
-  {
-    id: 3,
-    productId: 3,
-    objectKey: null,
-    url: '/img/hero/hero.png',
-    altText: '드롭 이어링',
-    isPrimary: true,
-    orderIndex: 1,
-  },
-]
+type MemoryStore = {
+  categories: Category[]
+  products: ProductRecord[]
+  productImages: ProductImage[]
+  inquiries: InquiryRecord[]
+  settings: SettingsMap
+  notices: NoticeRecord[]
+  admins: Admin[]
+  counters: { product: number; productImage: number; inquiry: number; notice: number; admin: number }
+}
 
 declare global {
   // eslint-disable-next-line no-var
   var __jujwStore: MemoryStore | undefined
 }
 
+function nowText(): string {
+  return new Date().toISOString()
+}
+
 function createMemoryStore(): MemoryStore {
+  const now = nowText()
   return {
     categories: [...DEFAULT_CATEGORIES],
-    products: [...DEFAULT_PRODUCTS],
-    productImages: [...DEFAULT_PRODUCT_IMAGES],
+    products: [
+      {
+        id: 1,
+        categoryId: 1,
+        name: '18K 솔리테어 반지',
+        slug: '18k-solitaire-ring',
+        spec: '0.3ct / 18K White Gold',
+        description: '세련된 밴드 라인의 솔리테어 반지입니다.',
+        isFeatured: true,
+        isPublished: true,
+        orderIndex: 1,
+        createdAt: now,
+        updatedAt: now,
+      },
+      {
+        id: 2,
+        categoryId: 2,
+        name: '사파이어 펜던트 목걸이',
+        slug: 'sapphire-pendant-necklace',
+        spec: '14K Gold / Natural Sapphire',
+        description: '은은한 컬러감의 사파이어 포인트 목걸이입니다.',
+        isFeatured: true,
+        isPublished: true,
+        orderIndex: 2,
+        createdAt: now,
+        updatedAt: now,
+      },
+    ],
+    productImages: [
+      { id: 1, productId: 1, objectKey: null, url: '/img/hero/hero.png', altText: '18K 솔리테어 반지', isPrimary: true, orderIndex: 1 },
+      { id: 2, productId: 2, objectKey: null, url: '/img/hero/hero.png', altText: '사파이어 펜던트 목걸이', isPrimary: true, orderIndex: 1 },
+    ],
     inquiries: [],
     settings: { ...DEFAULT_SETTINGS },
     notices: [],
     admins: [],
-    counters: {
-      product: 4,
-      productImage: 4,
-      inquiry: 1,
-      notice: 1,
-      admin: 1,
-    },
+    counters: { product: 3, productImage: 3, inquiry: 1, notice: 1, admin: 1 },
   }
 }
 
@@ -244,137 +187,153 @@ function memoryStore(): MemoryStore {
   return globalThis.__jujwStore
 }
 
-function toBoolean(value: unknown): boolean {
-  return value === true || value === 1 || value === '1'
-}
-
-function nowText(): string {
-  return new Date().toISOString()
-}
-
-function getDb(): D1Database | null {
-  const env = getCloudflareEnv()
-  return env.DB ?? null
-}
-
-function ensurePersistentWrite(action: string): void {
-  if (!getDb() && isProductionRuntime()) {
-    throw new Error(`${action} requires a bound D1 database in production.`)
+function ensureWritableMemory(action: string): void {
+  if (isProductionRuntime()) {
+    throw new Error(`${action}: 운영 환경에서는 Supabase 연결이 필요합니다.`)
   }
 }
 
-async function allRows<T>(sql: string, params: unknown[] = []): Promise<T[] | null> {
-  const db = getDb()
-  if (!db) {
-    return null
-  }
-  const prepared = db.prepare(sql).bind(...params)
-  const result = await prepared.all<T>()
-  return (result.results ?? []) as T[]
-}
+/* -------------------------------------------------------------------------- */
+/*  매핑 헬퍼                                                                   */
+/* -------------------------------------------------------------------------- */
 
-async function firstRow<T>(sql: string, params: unknown[] = []): Promise<T | null> {
-  const db = getDb()
-  if (!db) {
-    return null
-  }
-  const prepared = db.prepare(sql).bind(...params)
-  const result = await prepared.first<T>()
-  return result ?? null
-}
-
-async function runQuery(sql: string, params: unknown[] = []): Promise<D1Result | null> {
-  const db = getDb()
-  if (!db) {
-    return null
-  }
-  const prepared = db.prepare(sql).bind(...params)
-  return prepared.run()
-}
-
-function mapProductRow(row: {
+type ProductRow = {
   id: number
   categoryId: number
-  categoryName?: string
-  categorySlug?: string
   name: string
   slug: string
-  spec?: string | null
-  description?: string | null
-  isFeatured?: number | boolean
-  isPublished?: number | boolean
-  orderIndex?: number
-  imageUrl?: string | null
-  createdAt?: string
-  updatedAt?: string
-}): Product {
+  spec: string | null
+  description: string | null
+  isFeatured: boolean | number | null
+  isPublished: boolean | number | null
+  orderIndex: number | null
+  createdAt: string
+  updatedAt: string
+  category?: { name?: string; slug?: string } | null
+  images?: Array<{ url: string; isPrimary: boolean | number | null; orderIndex: number | null }> | null
+}
+
+function pickPrimaryImageUrl(images: ProductRow['images']): string | null {
+  const list = Array.isArray(images) ? images : []
+  if (list.length === 0) return null
+  const primary = list.find((image) => Boolean(image.isPrimary))
+  if (primary) return primary.url
+  const sorted = [...list].sort((a, b) => (a.orderIndex ?? 0) - (b.orderIndex ?? 0))
+  return sorted[0]?.url ?? null
+}
+
+function mapProductRow(row: ProductRow): Product {
   return {
     id: Number(row.id),
     categoryId: Number(row.categoryId),
-    categoryName: row.categoryName,
-    categorySlug: row.categorySlug,
+    categoryName: row.category?.name,
+    categorySlug: row.category?.slug,
     name: row.name,
     slug: row.slug,
     spec: row.spec ?? null,
     description: row.description ?? null,
-    isFeatured: toBoolean(row.isFeatured),
-    isPublished: toBoolean(row.isPublished),
+    isFeatured: Boolean(row.isFeatured),
+    isPublished: Boolean(row.isPublished),
     orderIndex: Number(row.orderIndex ?? 0),
-    imageUrl: row.imageUrl ?? null,
-    createdAt: row.createdAt ?? nowText(),
-    updatedAt: row.updatedAt ?? nowText(),
+    imageUrl: pickPrimaryImageUrl(row.images),
+    createdAt: row.createdAt,
+    updatedAt: row.updatedAt,
   }
 }
 
-export async function getCategories(): Promise<Category[]> {
-  const rows = await allRows<{
-    id: number
-    name: string
-    slug: string
-    orderIndex: number
-  }>(
-    `SELECT id, name, slug, order_index AS orderIndex
-       FROM categories
-      ORDER BY order_index ASC, id ASC`
-  )
+const PRODUCT_SELECT = `
+  id,
+  categoryId:category_id,
+  name,
+  slug,
+  spec,
+  description,
+  isFeatured:is_featured,
+  isPublished:is_published,
+  orderIndex:order_index,
+  createdAt:created_at,
+  updatedAt:updated_at,
+  category:categories(name, slug),
+  images:product_images(url, isPrimary:is_primary, orderIndex:order_index)
+`
 
-  if (rows) {
-    return rows.map((row) => ({
-      id: Number(row.id),
-      name: row.name,
-      slug: row.slug,
-      orderIndex: Number(row.orderIndex),
-    }))
+const IMAGE_SELECT = `
+  id,
+  productId:product_id,
+  objectKey:object_key,
+  url,
+  altText:alt_text,
+  isPrimary:is_primary,
+  orderIndex:order_index
+`
+
+function mapImageRow(row: {
+  id: number
+  productId: number
+  objectKey: string | null
+  url: string
+  altText: string | null
+  isPrimary: boolean | number | null
+  orderIndex: number | null
+}): ProductImage {
+  return {
+    id: Number(row.id),
+    productId: Number(row.productId),
+    objectKey: row.objectKey ?? null,
+    url: row.url,
+    altText: row.altText ?? null,
+    isPrimary: Boolean(row.isPrimary),
+    orderIndex: Number(row.orderIndex ?? 0),
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/*  카테고리                                                                    */
+/* -------------------------------------------------------------------------- */
+
+export async function getCategories(): Promise<Category[]> {
+  const supabase = getSupabaseAdmin()
+  if (!supabase) {
+    return [...memoryStore().categories]
   }
 
-  return [...memoryStore().categories]
+  const { data, error } = await supabase
+    .from('categories')
+    .select('id, name, slug, orderIndex:order_index')
+    .order('order_index', { ascending: true })
+    .order('id', { ascending: true })
+
+  if (error) throw new Error(error.message)
+
+  return (data ?? []).map((row) => ({
+    id: Number(row.id),
+    name: row.name,
+    slug: row.slug,
+    orderIndex: Number(row.orderIndex ?? 0),
+  }))
 }
 
 export async function getCategoryBySlug(slug: string): Promise<Category | null> {
-  const row = await firstRow<{
-    id: number
-    name: string
-    slug: string
-    orderIndex: number
-  }>(
-    `SELECT id, name, slug, order_index AS orderIndex
-       FROM categories
-      WHERE slug = ?`,
-    [slug]
-  )
-
-  if (row) {
-    return {
-      id: Number(row.id),
-      name: row.name,
-      slug: row.slug,
-      orderIndex: Number(row.orderIndex),
-    }
+  const supabase = getSupabaseAdmin()
+  if (!supabase) {
+    return memoryStore().categories.find((category) => category.slug === slug) ?? null
   }
 
-  const store = memoryStore()
-  return store.categories.find((category) => category.slug === slug) ?? null
+  const { data, error } = await supabase
+    .from('categories')
+    .select('id, name, slug, orderIndex:order_index')
+    .eq('slug', slug)
+    .maybeSingle()
+
+  if (error) throw new Error(error.message)
+  if (!data) return null
+
+  return { id: Number(data.id), name: data.name, slug: data.slug, orderIndex: Number(data.orderIndex ?? 0) }
 }
+
+/* -------------------------------------------------------------------------- */
+/*  제품                                                                        */
+/* -------------------------------------------------------------------------- */
 
 type GetProductsOptions = {
   category?: string
@@ -384,341 +343,259 @@ type GetProductsOptions = {
 }
 
 export async function getProducts(options: GetProductsOptions = {}): Promise<Product[]> {
-  const where: string[] = ['1=1']
-  const params: unknown[] = []
+  const supabase = getSupabaseAdmin()
+
+  if (!supabase) {
+    const store = memoryStore()
+    const categoryMap = new Map(store.categories.map((category) => [category.id, category]))
+    return store.products
+      .filter((product) => {
+        const category = categoryMap.get(product.categoryId)
+        if (options.category && category?.slug !== options.category) return false
+        if (typeof options.featured === 'boolean' && product.isFeatured !== options.featured) return false
+        if (typeof options.published === 'boolean' && product.isPublished !== options.published) return false
+        return true
+      })
+      .sort((a, b) => a.orderIndex - b.orderIndex || b.id - a.id)
+      .slice(0, options.limit && options.limit > 0 ? options.limit : undefined)
+      .map((product) => {
+        const category = categoryMap.get(product.categoryId)
+        const primaryImage = store.productImages.find((image) => image.productId === product.id && image.isPrimary)
+        return {
+          id: product.id,
+          categoryId: product.categoryId,
+          categoryName: category?.name,
+          categorySlug: category?.slug,
+          name: product.name,
+          slug: product.slug,
+          spec: product.spec,
+          description: product.description,
+          isFeatured: product.isFeatured,
+          isPublished: product.isPublished,
+          orderIndex: product.orderIndex,
+          imageUrl: primaryImage?.url ?? null,
+          createdAt: product.createdAt,
+          updatedAt: product.updatedAt,
+        }
+      })
+  }
+
+  let query = supabase.from('products').select(PRODUCT_SELECT)
 
   if (options.category) {
-    where.push('c.slug = ?')
-    params.push(options.category)
+    const category = await getCategoryBySlug(options.category)
+    if (!category) return []
+    query = query.eq('category_id', category.id)
   }
-
   if (typeof options.featured === 'boolean') {
-    where.push('p.is_featured = ?')
-    params.push(options.featured ? 1 : 0)
+    query = query.eq('is_featured', options.featured)
   }
-
   if (typeof options.published === 'boolean') {
-    where.push('p.is_published = ?')
-    params.push(options.published ? 1 : 0)
+    query = query.eq('is_published', options.published)
   }
 
-  let sql = `SELECT
-      p.id,
-      p.category_id AS categoryId,
-      c.name AS categoryName,
-      c.slug AS categorySlug,
-      p.name,
-      p.slug,
-      p.spec,
-      p.description,
-      p.is_featured AS isFeatured,
-      p.is_published AS isPublished,
-      p.order_index AS orderIndex,
-      p.created_at AS createdAt,
-      p.updated_at AS updatedAt,
-      pi.url AS imageUrl
-    FROM products p
-    LEFT JOIN categories c ON c.id = p.category_id
-    LEFT JOIN product_images pi ON pi.product_id = p.id AND pi.is_primary = 1
-    WHERE ${where.join(' AND ')}
-    ORDER BY p.order_index ASC, p.id DESC`
-
+  query = query.order('order_index', { ascending: true }).order('id', { ascending: false })
   if (options.limit && options.limit > 0) {
-    sql += ' LIMIT ?'
-    params.push(options.limit)
+    query = query.limit(options.limit)
   }
 
-  const rows = await allRows<{
-    id: number
-    categoryId: number
-    categoryName?: string
-    categorySlug?: string
-    name: string
-    slug: string
-    spec?: string | null
-    description?: string | null
-    isFeatured?: number | boolean
-    isPublished?: number | boolean
-    orderIndex?: number
-    imageUrl?: string | null
-    createdAt?: string
-    updatedAt?: string
-  }>(sql, params)
+  const { data, error } = await query
+  if (error) throw new Error(error.message)
 
-  if (rows) {
-    return rows.map(mapProductRow)
-  }
-
-  const store = memoryStore()
-  const categoryMap = new Map(store.categories.map((category) => [category.id, category]))
-
-  return store.products
-    .filter((product) => {
-      const category = categoryMap.get(product.categoryId)
-      if (options.category && category?.slug !== options.category) {
-        return false
-      }
-      if (typeof options.featured === 'boolean' && product.isFeatured !== options.featured) {
-        return false
-      }
-      if (typeof options.published === 'boolean' && product.isPublished !== options.published) {
-        return false
-      }
-      return true
-    })
-    .sort((a, b) => a.orderIndex - b.orderIndex || b.id - a.id)
-    .slice(0, options.limit ? options.limit : undefined)
-    .map((product) => {
-      const category = categoryMap.get(product.categoryId)
-      const primaryImage = store.productImages.find(
-        (image) => image.productId === product.id && image.isPrimary
-      )
-      return {
-        id: product.id,
-        categoryId: product.categoryId,
-        categoryName: category?.name,
-        categorySlug: category?.slug,
-        name: product.name,
-        slug: product.slug,
-        spec: product.spec,
-        description: product.description,
-        isFeatured: product.isFeatured,
-        isPublished: product.isPublished,
-        orderIndex: product.orderIndex,
-        imageUrl: primaryImage?.url ?? null,
-        createdAt: product.createdAt,
-        updatedAt: product.updatedAt,
-      }
-    })
+  return ((data ?? []) as unknown as ProductRow[]).map(mapProductRow)
 }
 
 export async function getProductById(id: number): Promise<Product | null> {
-  const rows = await getProducts({ published: undefined })
-  return rows.find((product) => product.id === id) ?? null
+  const supabase = getSupabaseAdmin()
+  if (!supabase) {
+    const products = await getProducts({})
+    return products.find((product) => product.id === id) ?? null
+  }
+
+  const { data, error } = await supabase.from('products').select(PRODUCT_SELECT).eq('id', id).maybeSingle()
+  if (error) throw new Error(error.message)
+  if (!data) return null
+  return mapProductRow(data as unknown as ProductRow)
 }
 
 export async function getProductBySlug(categorySlug: string, slug: string): Promise<Product | null> {
-  const rows = await allRows<{
-    id: number
-    categoryId: number
-    categoryName?: string
-    categorySlug?: string
-    name: string
-    slug: string
-    spec?: string | null
-    description?: string | null
-    isFeatured?: number | boolean
-    isPublished?: number | boolean
-    orderIndex?: number
-    imageUrl?: string | null
-    createdAt?: string
-    updatedAt?: string
-  }>(
-    `SELECT
-      p.id,
-      p.category_id AS categoryId,
-      c.name AS categoryName,
-      c.slug AS categorySlug,
-      p.name,
-      p.slug,
-      p.spec,
-      p.description,
-      p.is_featured AS isFeatured,
-      p.is_published AS isPublished,
-      p.order_index AS orderIndex,
-      p.created_at AS createdAt,
-      p.updated_at AS updatedAt,
-      pi.url AS imageUrl
-    FROM products p
-    LEFT JOIN categories c ON c.id = p.category_id
-    LEFT JOIN product_images pi ON pi.product_id = p.id AND pi.is_primary = 1
-    WHERE c.slug = ?
-      AND p.slug = ?
-    LIMIT 1`,
-    [categorySlug, slug]
-  )
-
-  if (rows && rows.length > 0) {
-    return mapProductRow(rows[0])
+  const supabase = getSupabaseAdmin()
+  if (!supabase) {
+    const products = await getProducts({ category: categorySlug })
+    return products.find((product) => product.slug === slug) ?? null
   }
 
-  const products = await getProducts({ category: categorySlug })
-  return products.find((product) => product.slug === slug) ?? null
+  const category = await getCategoryBySlug(categorySlug)
+  if (!category) return null
+
+  const { data, error } = await supabase
+    .from('products')
+    .select(PRODUCT_SELECT)
+    .eq('category_id', category.id)
+    .eq('slug', slug)
+    .maybeSingle()
+
+  if (error) throw new Error(error.message)
+  if (!data) return null
+  return mapProductRow(data as unknown as ProductRow)
 }
 
 export async function getProductImages(productId: number): Promise<ProductImage[]> {
-  const rows = await allRows<{
-    id: number
-    productId: number
-    objectKey: string | null
-    url: string
-    altText: string | null
-    isPrimary: number | boolean
-    orderIndex: number
-  }>(
-    `SELECT
-      id,
-      product_id AS productId,
-      object_key AS objectKey,
-      url,
-      alt_text AS altText,
-      is_primary AS isPrimary,
-      order_index AS orderIndex
-    FROM product_images
-    WHERE product_id = ?
-    ORDER BY order_index ASC, id ASC`,
-    [productId]
-  )
-
-  if (rows) {
-    return rows.map((row) => ({
-      id: Number(row.id),
-      productId: Number(row.productId),
-      objectKey: row.objectKey,
-      url: row.url,
-      altText: row.altText,
-      isPrimary: toBoolean(row.isPrimary),
-      orderIndex: Number(row.orderIndex),
-    }))
+  const supabase = getSupabaseAdmin()
+  if (!supabase) {
+    return memoryStore()
+      .productImages.filter((image) => image.productId === productId)
+      .sort((a, b) => a.orderIndex - b.orderIndex || a.id - b.id)
   }
 
-  return memoryStore().productImages.filter((image) => image.productId === productId)
+  const { data, error } = await supabase
+    .from('product_images')
+    .select(IMAGE_SELECT)
+    .eq('product_id', productId)
+    .order('order_index', { ascending: true })
+    .order('id', { ascending: true })
+
+  if (error) throw new Error(error.message)
+  return (data ?? []).map(mapImageRow)
+}
+
+/**
+ * slug가 다른 제품과 겹치지 않도록 보장합니다. (UNIQUE 제약 위반 방지)
+ * 이미 사용 중이면 base, base-2, base-3 … 순으로 비어 있는 값을 찾습니다.
+ */
+async function resolveUniqueSlug(base: string, excludeId?: number): Promise<string> {
+  const cleanBase = base.trim() || `item-${Date.now().toString(36)}`
+  const supabase = getSupabaseAdmin()
+
+  if (!supabase) {
+    const store = memoryStore()
+    const taken = new Set(
+      store.products.filter((product) => product.id !== excludeId).map((product) => product.slug)
+    )
+    if (!taken.has(cleanBase)) return cleanBase
+    let n = 2
+    while (taken.has(`${cleanBase}-${n}`)) n += 1
+    return `${cleanBase}-${n}`
+  }
+
+  let query = supabase.from('products').select('slug').like('slug', `${cleanBase}%`)
+  if (typeof excludeId === 'number') {
+    query = query.neq('id', excludeId)
+  }
+  const { data } = await query
+  const taken = new Set((data ?? []).map((row) => row.slug))
+  if (!taken.has(cleanBase)) return cleanBase
+  let n = 2
+  while (taken.has(`${cleanBase}-${n}`)) n += 1
+  return `${cleanBase}-${n}`
 }
 
 export async function createProduct(input: ProductInput): Promise<Product | null> {
-  ensurePersistentWrite('Product writes')
-  const payload: ProductInput = {
-    categoryId: input.categoryId,
-    name: input.name.trim(),
-    slug: input.slug.trim(),
-    spec: input.spec ?? null,
-    description: input.description ?? null,
-    isFeatured: input.isFeatured ?? false,
-    isPublished: input.isPublished ?? true,
-    orderIndex: input.orderIndex ?? 0,
-  }
+  const uniqueSlug = await resolveUniqueSlug(input.slug)
+  input = { ...input, slug: uniqueSlug }
 
-  const run = await runQuery(
-    `INSERT INTO products (
-      category_id,
-      name,
-      slug,
-      spec,
-      description,
-      is_featured,
-      is_published,
-      order_index,
-      created_at,
-      updated_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
-    [
-      payload.categoryId,
-      payload.name,
-      payload.slug,
-      payload.spec,
-      payload.description,
-      payload.isFeatured ? 1 : 0,
-      payload.isPublished ? 1 : 0,
-      payload.orderIndex,
-    ]
-  )
-
-  if (run) {
-    const insertedId = Number(run.meta.last_row_id)
-    return getProductById(insertedId)
-  }
-
-  const store = memoryStore()
-  const id = store.counters.product++
-  store.products.push({
-    id,
-    categoryId: payload.categoryId,
-    name: payload.name,
-    slug: payload.slug,
-    spec: payload.spec ?? null,
-    description: payload.description ?? null,
-    isFeatured: payload.isFeatured ?? false,
-    isPublished: payload.isPublished ?? true,
-    orderIndex: payload.orderIndex ?? 0,
-    createdAt: nowText(),
-    updatedAt: nowText(),
-  })
-
-  return getProductById(id)
-}
-
-export async function updateProduct(id: number, input: Partial<ProductInput>): Promise<Product | null> {
-  ensurePersistentWrite('Product writes')
-  const run = await runQuery(
-    `UPDATE products
-       SET category_id = COALESCE(?, category_id),
-           name = COALESCE(?, name),
-           slug = COALESCE(?, slug),
-           spec = COALESCE(?, spec),
-           description = COALESCE(?, description),
-           is_featured = COALESCE(?, is_featured),
-           is_published = COALESCE(?, is_published),
-           order_index = COALESCE(?, order_index),
-           updated_at = CURRENT_TIMESTAMP
-     WHERE id = ?`,
-    [
-      input.categoryId ?? null,
-      input.name?.trim() ?? null,
-      input.slug?.trim() ?? null,
-      input.spec ?? null,
-      input.description ?? null,
-      typeof input.isFeatured === 'boolean' ? (input.isFeatured ? 1 : 0) : null,
-      typeof input.isPublished === 'boolean' ? (input.isPublished ? 1 : 0) : null,
-      input.orderIndex ?? null,
+  const supabase = getSupabaseAdmin()
+  if (!supabase) {
+    ensureWritableMemory('제품 등록')
+    const store = memoryStore()
+    const id = store.counters.product++
+    store.products.push({
       id,
-    ]
-  )
-
-  if (run) {
+      categoryId: input.categoryId,
+      name: input.name.trim(),
+      slug: input.slug.trim(),
+      spec: input.spec ?? null,
+      description: input.description ?? null,
+      isFeatured: input.isFeatured ?? false,
+      isPublished: input.isPublished ?? true,
+      orderIndex: input.orderIndex ?? 0,
+      createdAt: nowText(),
+      updatedAt: nowText(),
+    })
     return getProductById(id)
   }
 
-  const store = memoryStore()
-  const target = store.products.find((product) => product.id === id)
-  if (!target) {
-    return null
+  const { data, error } = await supabase
+    .from('products')
+    .insert({
+      category_id: input.categoryId,
+      name: input.name.trim(),
+      slug: input.slug.trim(),
+      spec: input.spec ?? null,
+      description: input.description ?? null,
+      is_featured: input.isFeatured ?? false,
+      is_published: input.isPublished ?? true,
+      order_index: input.orderIndex ?? 0,
+    })
+    .select('id')
+    .single()
+
+  if (error) throw new Error(error.message)
+  return getProductById(Number(data.id))
+}
+
+export async function updateProduct(id: number, input: Partial<ProductInput>): Promise<Product | null> {
+  if (typeof input.slug === 'string' && input.slug.trim()) {
+    input = { ...input, slug: await resolveUniqueSlug(input.slug, id) }
   }
 
-  if (typeof input.categoryId === 'number') target.categoryId = input.categoryId
-  if (typeof input.name === 'string') target.name = input.name.trim()
-  if (typeof input.slug === 'string') target.slug = input.slug.trim()
-  if (typeof input.spec !== 'undefined') target.spec = input.spec
-  if (typeof input.description !== 'undefined') target.description = input.description
-  if (typeof input.isFeatured === 'boolean') target.isFeatured = input.isFeatured
-  if (typeof input.isPublished === 'boolean') target.isPublished = input.isPublished
-  if (typeof input.orderIndex === 'number') target.orderIndex = input.orderIndex
-  target.updatedAt = nowText()
+  const supabase = getSupabaseAdmin()
+  if (!supabase) {
+    ensureWritableMemory('제품 수정')
+    const store = memoryStore()
+    const target = store.products.find((product) => product.id === id)
+    if (!target) return null
+    if (typeof input.categoryId === 'number') target.categoryId = input.categoryId
+    if (typeof input.name === 'string') target.name = input.name.trim()
+    if (typeof input.slug === 'string') target.slug = input.slug.trim()
+    if (typeof input.spec !== 'undefined') target.spec = input.spec ?? null
+    if (typeof input.description !== 'undefined') target.description = input.description ?? null
+    if (typeof input.isFeatured === 'boolean') target.isFeatured = input.isFeatured
+    if (typeof input.isPublished === 'boolean') target.isPublished = input.isPublished
+    if (typeof input.orderIndex === 'number') target.orderIndex = input.orderIndex
+    target.updatedAt = nowText()
+    return getProductById(id)
+  }
 
+  const patch: Record<string, unknown> = { updated_at: nowText() }
+  if (typeof input.categoryId === 'number') patch.category_id = input.categoryId
+  if (typeof input.name === 'string') patch.name = input.name.trim()
+  if (typeof input.slug === 'string') patch.slug = input.slug.trim()
+  if (typeof input.spec !== 'undefined') patch.spec = input.spec ?? null
+  if (typeof input.description !== 'undefined') patch.description = input.description ?? null
+  if (typeof input.isFeatured === 'boolean') patch.is_featured = input.isFeatured
+  if (typeof input.isPublished === 'boolean') patch.is_published = input.isPublished
+  if (typeof input.orderIndex === 'number') patch.order_index = input.orderIndex
+
+  const { error } = await supabase.from('products').update(patch).eq('id', id)
+  if (error) throw new Error(error.message)
   return getProductById(id)
 }
 
 export async function deleteProduct(id: number): Promise<{ ok: boolean; imageKeys: string[] }> {
-  ensurePersistentWrite('Product writes')
   const existingImages = await getProductImages(id)
   const imageKeys = existingImages
     .map((image) => image.objectKey)
     .filter((key): key is string => Boolean(key))
 
-  const run = await runQuery('DELETE FROM products WHERE id = ?', [id])
-  if (run) {
-    return { ok: true, imageKeys }
+  const supabase = getSupabaseAdmin()
+  if (!supabase) {
+    ensureWritableMemory('제품 삭제')
+    const store = memoryStore()
+    const before = store.products.length
+    store.products = store.products.filter((product) => product.id !== id)
+    store.productImages = store.productImages.filter((image) => image.productId !== id)
+    return { ok: store.products.length !== before, imageKeys }
   }
 
-  const store = memoryStore()
-  const initialLength = store.products.length
-  store.products = store.products.filter((product) => product.id !== id)
-  store.productImages = store.productImages.filter((image) => image.productId !== id)
-
-  return {
-    ok: store.products.length !== initialLength,
-    imageKeys,
-  }
+  const { error } = await supabase.from('products').delete().eq('id', id)
+  if (error) throw new Error(error.message)
+  return { ok: true, imageKeys }
 }
+
+/* -------------------------------------------------------------------------- */
+/*  제품 이미지                                                                 */
+/* -------------------------------------------------------------------------- */
 
 export async function addProductImage(input: {
   productId: number
@@ -728,339 +605,222 @@ export async function addProductImage(input: {
   isPrimary?: boolean
   orderIndex?: number
 }): Promise<ProductImage | null> {
-  ensurePersistentWrite('Product image writes')
-  if (input.isPrimary) {
-    await runQuery('UPDATE product_images SET is_primary = 0 WHERE product_id = ?', [input.productId])
-  }
-
-  const run = await runQuery(
-    `INSERT INTO product_images (
-      product_id,
-      object_key,
-      url,
-      alt_text,
-      is_primary,
-      order_index,
-      created_at
-    ) VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
-    [
-      input.productId,
-      input.objectKey,
-      input.url,
-      input.altText ?? null,
-      input.isPrimary ? 1 : 0,
-      input.orderIndex ?? 0,
-    ]
-  )
-
-  if (run) {
-    const id = Number(run.meta.last_row_id)
-    const rows = await allRows<{
-      id: number
-      productId: number
-      objectKey: string | null
-      url: string
-      altText: string | null
-      isPrimary: number | boolean
-      orderIndex: number
-    }>(
-      `SELECT
-        id,
-        product_id AS productId,
-        object_key AS objectKey,
-        url,
-        alt_text AS altText,
-        is_primary AS isPrimary,
-        order_index AS orderIndex
-      FROM product_images
-      WHERE id = ?`,
-      [id]
-    )
-
-    if (!rows || rows.length === 0) {
-      return null
+  const supabase = getSupabaseAdmin()
+  if (!supabase) {
+    ensureWritableMemory('이미지 등록')
+    const store = memoryStore()
+    if (input.isPrimary) {
+      store.productImages = store.productImages.map((image) =>
+        image.productId === input.productId ? { ...image, isPrimary: false } : image
+      )
     }
-
-    const row = rows[0]
-    return {
-      id: Number(row.id),
-      productId: Number(row.productId),
-      objectKey: row.objectKey,
-      url: row.url,
-      altText: row.altText,
-      isPrimary: toBoolean(row.isPrimary),
-      orderIndex: Number(row.orderIndex),
+    const image: ProductImage = {
+      id: store.counters.productImage++,
+      productId: input.productId,
+      objectKey: input.objectKey,
+      url: input.url,
+      altText: input.altText ?? null,
+      isPrimary: Boolean(input.isPrimary),
+      orderIndex: input.orderIndex ?? 0,
     }
+    store.productImages.push(image)
+    return image
   }
 
-  const store = memoryStore()
   if (input.isPrimary) {
-    store.productImages = store.productImages.map((image) =>
-      image.productId === input.productId ? { ...image, isPrimary: false } : image
-    )
+    await supabase.from('product_images').update({ is_primary: false }).eq('product_id', input.productId)
   }
 
-  const image: ProductImage = {
-    id: store.counters.productImage++,
-    productId: input.productId,
-    objectKey: input.objectKey,
-    url: input.url,
-    altText: input.altText ?? null,
-    isPrimary: Boolean(input.isPrimary),
-    orderIndex: input.orderIndex ?? 0,
-  }
+  const { data, error } = await supabase
+    .from('product_images')
+    .insert({
+      product_id: input.productId,
+      object_key: input.objectKey,
+      url: input.url,
+      alt_text: input.altText ?? null,
+      is_primary: input.isPrimary ?? false,
+      order_index: input.orderIndex ?? 0,
+    })
+    .select(IMAGE_SELECT)
+    .single()
 
-  store.productImages.push(image)
-  return image
+  if (error) throw new Error(error.message)
+  return mapImageRow(data)
 }
 
 export async function deleteProductImage(id: number): Promise<{ ok: boolean; imageKey: string | null }> {
-  ensurePersistentWrite('Product image writes')
-  const row = await firstRow<{
-    id: number
-    productId: number
-    objectKey: string | null
-    isPrimary: number | boolean
-  }>(
-    `SELECT id, product_id AS productId, object_key AS objectKey, is_primary AS isPrimary
-       FROM product_images
-      WHERE id = ?`,
-    [id]
-  )
-
-  if (row) {
-    await runQuery('DELETE FROM product_images WHERE id = ?', [id])
-
-    if (toBoolean(row.isPrimary)) {
-      await runQuery(
-        `UPDATE product_images
-            SET is_primary = 1
-          WHERE id = (
-            SELECT id FROM product_images
-             WHERE product_id = ?
-             ORDER BY order_index ASC, id ASC
-             LIMIT 1
-          )`,
-        [row.productId]
-      )
+  const supabase = getSupabaseAdmin()
+  if (!supabase) {
+    ensureWritableMemory('이미지 삭제')
+    const store = memoryStore()
+    const target = store.productImages.find((image) => image.id === id)
+    if (!target) return { ok: false, imageKey: null }
+    store.productImages = store.productImages.filter((image) => image.id !== id)
+    if (target.isPrimary) {
+      const fallback = store.productImages
+        .filter((image) => image.productId === target.productId)
+        .sort((a, b) => a.orderIndex - b.orderIndex || a.id - b.id)[0]
+      if (fallback) fallback.isPrimary = true
     }
-
-    return { ok: true, imageKey: row.objectKey }
+    return { ok: true, imageKey: target.objectKey }
   }
 
-  const store = memoryStore()
-  const target = store.productImages.find((image) => image.id === id)
-  if (!target) {
-    return { ok: false, imageKey: null }
-  }
+  const { data: row, error: findError } = await supabase
+    .from('product_images')
+    .select('id, productId:product_id, objectKey:object_key, isPrimary:is_primary')
+    .eq('id', id)
+    .maybeSingle()
 
-  store.productImages = store.productImages.filter((image) => image.id !== id)
-  if (target.isPrimary) {
-    const fallback = store.productImages
-      .filter((image) => image.productId === target.productId)
-      .sort((a, b) => a.orderIndex - b.orderIndex || a.id - b.id)[0]
+  if (findError) throw new Error(findError.message)
+  if (!row) return { ok: false, imageKey: null }
 
+  const { error: deleteError } = await supabase.from('product_images').delete().eq('id', id)
+  if (deleteError) throw new Error(deleteError.message)
+
+  if (row.isPrimary) {
+    const { data: fallback } = await supabase
+      .from('product_images')
+      .select('id')
+      .eq('product_id', row.productId)
+      .order('order_index', { ascending: true })
+      .order('id', { ascending: true })
+      .limit(1)
+      .maybeSingle()
     if (fallback) {
-      fallback.isPrimary = true
+      await supabase.from('product_images').update({ is_primary: true }).eq('id', fallback.id)
     }
   }
 
-  return { ok: true, imageKey: target.objectKey }
+  return { ok: true, imageKey: (row.objectKey as string | null) ?? null }
 }
 
 export async function setPrimaryProductImage(id: number): Promise<ProductImage | null> {
-  ensurePersistentWrite('Product image writes')
-
-  const row = await firstRow<{
-    id: number
-    productId: number
-    objectKey: string | null
-    url: string
-    altText: string | null
-    isPrimary: number | boolean
-    orderIndex: number
-  }>(
-    `SELECT
-      id,
-      product_id AS productId,
-      object_key AS objectKey,
-      url,
-      alt_text AS altText,
-      is_primary AS isPrimary,
-      order_index AS orderIndex
-     FROM product_images
-     WHERE id = ?`,
-    [id]
-  )
-
-  if (row) {
-    await runQuery('UPDATE product_images SET is_primary = 0 WHERE product_id = ?', [row.productId])
-    await runQuery('UPDATE product_images SET is_primary = 1 WHERE id = ?', [id])
-    return {
-      id: Number(row.id),
-      productId: Number(row.productId),
-      objectKey: row.objectKey,
-      url: row.url,
-      altText: row.altText,
-      isPrimary: true,
-      orderIndex: Number(row.orderIndex),
-    }
+  const supabase = getSupabaseAdmin()
+  if (!supabase) {
+    ensureWritableMemory('대표사진 설정')
+    const store = memoryStore()
+    const target = store.productImages.find((image) => image.id === id)
+    if (!target) return null
+    store.productImages = store.productImages.map((image) =>
+      image.productId === target.productId ? { ...image, isPrimary: image.id === target.id } : image
+    )
+    return store.productImages.find((image) => image.id === id) ?? null
   }
 
-  const store = memoryStore()
-  const target = store.productImages.find((image) => image.id === id)
-  if (!target) {
-    return null
-  }
+  const { data: row, error } = await supabase
+    .from('product_images')
+    .select(IMAGE_SELECT)
+    .eq('id', id)
+    .maybeSingle()
 
-  store.productImages = store.productImages.map((image) =>
-    image.productId === target.productId ? { ...image, isPrimary: image.id === target.id } : image
-  )
+  if (error) throw new Error(error.message)
+  if (!row) return null
 
-  return store.productImages.find((image) => image.id === id) ?? null
+  await supabase.from('product_images').update({ is_primary: false }).eq('product_id', row.productId)
+  await supabase.from('product_images').update({ is_primary: true }).eq('id', id)
+
+  return mapImageRow({ ...row, isPrimary: true })
 }
 
+/* -------------------------------------------------------------------------- */
+/*  문의                                                                        */
+/* -------------------------------------------------------------------------- */
+
 export async function createInquiry(input: InquiryInput): Promise<Inquiry> {
-  ensurePersistentWrite('Inquiry writes')
-  const payload: InquiryInput = {
-    companyName: input.companyName.trim(),
-    phone: input.phone.trim(),
-    interest: input.interest ?? null,
-    message: input.message ?? null,
-    ipAddress: input.ipAddress ?? null,
-  }
-
-  const run = await runQuery(
-    `INSERT INTO inquiries (
-      company_name,
-      phone,
-      interest,
-      message,
-      status,
-      ip_address,
-      created_at,
-      updated_at
-    ) VALUES (?, ?, ?, ?, 'pending', ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
-    [payload.companyName, payload.phone, payload.interest, payload.message, payload.ipAddress]
-  )
-
-  if (run) {
-    const insertedId = Number(run.meta.last_row_id)
-    const inquiry = await firstRow<{
-      id: number
-      companyName: string
-      phone: string
-      interest: string | null
-      message: string | null
-      status: InquiryStatus
-      createdAt: string
-      updatedAt: string
-    }>(
-      `SELECT
-        id,
-        company_name AS companyName,
-        phone,
-        interest,
-        message,
-        status,
-        created_at AS createdAt,
-        updated_at AS updatedAt
-      FROM inquiries
-      WHERE id = ?`,
-      [insertedId]
-    )
-
-    if (inquiry) {
-      return inquiry
+  const supabase = getSupabaseAdmin()
+  if (!supabase) {
+    ensureWritableMemory('문의 접수')
+    const store = memoryStore()
+    const inquiry: InquiryRecord = {
+      id: store.counters.inquiry++,
+      companyName: input.companyName.trim(),
+      phone: input.phone.trim(),
+      interest: input.interest ?? null,
+      message: input.message ?? null,
+      status: 'pending',
+      ipAddress: input.ipAddress ?? null,
+      createdAt: nowText(),
+      updatedAt: nowText(),
     }
+    store.inquiries.unshift(inquiry)
+    return inquiry
   }
 
-  const store = memoryStore()
-  const inquiry: InquiryRecord = {
-    id: store.counters.inquiry++,
-    companyName: payload.companyName,
-    phone: payload.phone,
-    interest: payload.interest ?? null,
-    message: payload.message ?? null,
-    status: 'pending',
-    ipAddress: payload.ipAddress ?? null,
-    createdAt: nowText(),
-    updatedAt: nowText(),
-  }
+  const { data, error } = await supabase
+    .from('inquiries')
+    .insert({
+      company_name: input.companyName.trim(),
+      phone: input.phone.trim(),
+      interest: input.interest ?? null,
+      message: input.message ?? null,
+      status: 'pending',
+      ip_address: input.ipAddress ?? null,
+    })
+    .select('id, companyName:company_name, phone, interest, message, status, createdAt:created_at, updatedAt:updated_at')
+    .single()
 
-  store.inquiries.unshift(inquiry)
-  return inquiry
+  if (error) throw new Error(error.message)
+  return data as Inquiry
 }
 
 export async function getInquiries(): Promise<Inquiry[]> {
-  const rows = await allRows<Inquiry>(
-    `SELECT
-      id,
-      company_name AS companyName,
-      phone,
-      interest,
-      message,
-      status,
-      created_at AS createdAt,
-      updated_at AS updatedAt
-    FROM inquiries
-    ORDER BY id DESC`
-  )
-
-  if (rows) {
-    return rows
+  const supabase = getSupabaseAdmin()
+  if (!supabase) {
+    return [...memoryStore().inquiries].sort((a, b) => b.id - a.id)
   }
 
-  return [...memoryStore().inquiries].sort((a, b) => b.id - a.id)
+  const { data, error } = await supabase
+    .from('inquiries')
+    .select('id, companyName:company_name, phone, interest, message, status, createdAt:created_at, updatedAt:updated_at')
+    .order('id', { ascending: false })
+
+  if (error) throw new Error(error.message)
+  return (data ?? []) as Inquiry[]
 }
 
 export async function updateInquiryStatus(id: number, status: InquiryStatus): Promise<Inquiry | null> {
-  ensurePersistentWrite('Inquiry writes')
-  const run = await runQuery(
-    `UPDATE inquiries
-       SET status = ?, updated_at = CURRENT_TIMESTAMP
-     WHERE id = ?`,
-    [status, id]
-  )
-
-  if (run) {
-    return firstRow<Inquiry>(
-      `SELECT
-        id,
-        company_name AS companyName,
-        phone,
-        interest,
-        message,
-        status,
-        created_at AS createdAt,
-        updated_at AS updatedAt
-      FROM inquiries
-      WHERE id = ?`,
-      [id]
-    )
+  const supabase = getSupabaseAdmin()
+  if (!supabase) {
+    ensureWritableMemory('문의 상태 변경')
+    const store = memoryStore()
+    const target = store.inquiries.find((inquiry) => inquiry.id === id)
+    if (!target) return null
+    target.status = status
+    target.updatedAt = nowText()
+    return target
   }
 
-  const store = memoryStore()
-  const target = store.inquiries.find((inquiry) => inquiry.id === id)
-  if (!target) {
-    return null
-  }
+  const { data, error } = await supabase
+    .from('inquiries')
+    .update({ status, updated_at: nowText() })
+    .eq('id', id)
+    .select('id, companyName:company_name, phone, interest, message, status, createdAt:created_at, updatedAt:updated_at')
+    .maybeSingle()
 
-  target.status = status
-  target.updatedAt = nowText()
-  return target
+  if (error) throw new Error(error.message)
+  return (data as Inquiry) ?? null
 }
 
+/* -------------------------------------------------------------------------- */
+/*  설정                                                                        */
+/* -------------------------------------------------------------------------- */
+
 export async function getPublicSettings(): Promise<SettingsMap> {
-  const rows = await allRows<{ key: string; value: string }>('SELECT key, value FROM settings')
-  if (rows) {
-    return rows.reduce<SettingsMap>((acc, row) => {
-      acc[row.key] = row.value
-      return acc
-    }, {})
+  const supabase = getSupabaseAdmin()
+  if (!supabase) {
+    return { ...memoryStore().settings }
   }
 
-  return { ...memoryStore().settings }
+  const { data, error } = await supabase.from('settings').select('key, value')
+  if (error) throw new Error(error.message)
+
+  const map = (data ?? []).reduce<SettingsMap>((acc, row) => {
+    acc[row.key] = row.value
+    return acc
+  }, {})
+
+  // 기본값을 베이스로 깔아 누락 키를 보완
+  return { ...DEFAULT_SETTINGS, ...map }
 }
 
 export async function getAllSettings(): Promise<SettingsMap> {
@@ -1068,64 +828,43 @@ export async function getAllSettings(): Promise<SettingsMap> {
 }
 
 export async function upsertSettings(settings: SettingsMap): Promise<void> {
-  ensurePersistentWrite('Settings writes')
   const entries = Object.entries(settings)
+  if (entries.length === 0) return
 
-  if (entries.length === 0) {
-    return
-  }
-
-  const db = getDb()
-  if (db) {
+  const supabase = getSupabaseAdmin()
+  if (!supabase) {
+    ensureWritableMemory('설정 저장')
+    const store = memoryStore()
     for (const [key, value] of entries) {
-      await db
-        .prepare(
-          `INSERT INTO settings (key, value, updated_at)
-           VALUES (?, ?, CURRENT_TIMESTAMP)
-           ON CONFLICT(key) DO UPDATE SET
-             value = excluded.value,
-             updated_at = CURRENT_TIMESTAMP`
-        )
-        .bind(key, value)
-        .run()
+      store.settings[key] = value
     }
     return
   }
 
-  const store = memoryStore()
-  for (const [key, value] of entries) {
-    store.settings[key] = value
-  }
+  const rows = entries.map(([key, value]) => ({ key, value, updated_at: nowText() }))
+  const { error } = await supabase.from('settings').upsert(rows, { onConflict: 'key' })
+  if (error) throw new Error(error.message)
 }
 
-export async function getAdminByEmail(email: string): Promise<Admin | null> {
-  const row = await firstRow<{
-    id: number
-    email: string
-    name: string | null
-    passwordHash: string
-  }>(
-    `SELECT
-      id,
-      email,
-      name,
-      password_hash AS passwordHash
-     FROM admins
-    WHERE email = ?`,
-    [email]
-  )
+/* -------------------------------------------------------------------------- */
+/*  관리자                                                                      */
+/* -------------------------------------------------------------------------- */
 
-  if (row) {
-    return {
-      id: Number(row.id),
-      email: row.email,
-      name: row.name,
-      passwordHash: row.passwordHash,
-    }
+export async function getAdminByEmail(email: string): Promise<Admin | null> {
+  const supabase = getSupabaseAdmin()
+  if (!supabase) {
+    return memoryStore().admins.find((admin) => admin.email === email) ?? null
   }
 
-  const store = memoryStore()
-  return store.admins.find((admin) => admin.email === email) ?? null
+  const { data, error } = await supabase
+    .from('admins')
+    .select('id, email, name, passwordHash:password_hash')
+    .eq('email', email)
+    .maybeSingle()
+
+  if (error) throw new Error(error.message)
+  if (!data) return null
+  return { id: Number(data.id), email: data.email, name: data.name ?? null, passwordHash: data.passwordHash }
 }
 
 export async function upsertAdmin(input: {
@@ -1133,226 +872,196 @@ export async function upsertAdmin(input: {
   name?: string | null
   passwordHash: string
 }): Promise<void> {
-  ensurePersistentWrite('Admin writes')
-  const db = getDb()
-  if (db) {
-    await db
-      .prepare(
-        `INSERT INTO admins (email, name, password_hash)
-         VALUES (?, ?, ?)
-         ON CONFLICT(email) DO UPDATE SET
-           name = excluded.name,
-           password_hash = excluded.password_hash`
-      )
-      .bind(input.email, input.name ?? null, input.passwordHash)
-      .run()
+  const supabase = getSupabaseAdmin()
+  if (!supabase) {
+    ensureWritableMemory('관리자 저장')
+    const store = memoryStore()
+    const existing = store.admins.find((admin) => admin.email === input.email)
+    if (existing) {
+      existing.name = input.name ?? null
+      existing.passwordHash = input.passwordHash
+      return
+    }
+    store.admins.push({ id: store.counters.admin++, email: input.email, name: input.name ?? null, passwordHash: input.passwordHash })
     return
   }
 
-  const store = memoryStore()
-  const existing = store.admins.find((admin) => admin.email === input.email)
-  if (existing) {
-    existing.name = input.name ?? null
-    existing.passwordHash = input.passwordHash
-    return
-  }
+  const { error } = await supabase
+    .from('admins')
+    .upsert({ email: input.email, name: input.name ?? null, password_hash: input.passwordHash }, { onConflict: 'email' })
 
-  store.admins.push({
-    id: store.counters.admin++,
-    email: input.email,
-    name: input.name ?? null,
-    passwordHash: input.passwordHash,
-  })
+  if (error) throw new Error(error.message)
 }
 
-type NoticeOptions = {
-  publishedOnly?: boolean
-  limit?: number
+/* -------------------------------------------------------------------------- */
+/*  공지사항                                                                    */
+/* -------------------------------------------------------------------------- */
+
+type NoticeOptions = { publishedOnly?: boolean; limit?: number }
+
+const NOTICE_SELECT = 'id, title, content, isPublished:is_published, isPinned:is_pinned, createdAt:created_at, updatedAt:updated_at'
+
+function mapNoticeRow(row: {
+  id: number
+  title: string
+  content: string
+  isPublished: boolean | number | null
+  isPinned: boolean | number | null
+  createdAt: string
+  updatedAt: string
+}): Notice {
+  return {
+    id: Number(row.id),
+    title: row.title,
+    content: row.content,
+    isPublished: Boolean(row.isPublished),
+    isPinned: Boolean(row.isPinned),
+    createdAt: row.createdAt,
+    updatedAt: row.updatedAt,
+  }
 }
 
 export async function getNotices(options: NoticeOptions = {}): Promise<Notice[]> {
-  const where: string[] = ['1=1']
-  const params: unknown[] = []
-
-  if (options.publishedOnly) {
-    where.push('is_published = 1')
+  const supabase = getSupabaseAdmin()
+  if (!supabase) {
+    return [...memoryStore().notices]
+      .filter((notice) => (options.publishedOnly ? notice.isPublished : true))
+      .sort((a, b) => Number(b.isPinned) - Number(a.isPinned) || b.id - a.id)
+      .slice(0, options.limit && options.limit > 0 ? options.limit : undefined)
   }
 
-  let sql = `SELECT
-      id,
-      title,
-      content,
-      is_published AS isPublished,
-      is_pinned AS isPinned,
-      created_at AS createdAt,
-      updated_at AS updatedAt
-    FROM notices
-    WHERE ${where.join(' AND ')}
-    ORDER BY is_pinned DESC, id DESC`
+  let query = supabase.from('notices').select(NOTICE_SELECT)
+  if (options.publishedOnly) query = query.eq('is_published', true)
+  query = query.order('is_pinned', { ascending: false }).order('id', { ascending: false })
+  if (options.limit && options.limit > 0) query = query.limit(options.limit)
 
-  if (options.limit && options.limit > 0) {
-    sql += ' LIMIT ?'
-    params.push(options.limit)
+  const { data, error } = await query
+  if (error) throw new Error(error.message)
+  return (data ?? []).map(mapNoticeRow)
+}
+
+export async function getNoticeById(id: number): Promise<Notice | null> {
+  const supabase = getSupabaseAdmin()
+  if (!supabase) {
+    return memoryStore().notices.find((notice) => notice.id === id) ?? null
   }
 
-  const rows = await allRows<{
-    id: number
-    title: string
-    content: string
-    isPublished: number | boolean
-    isPinned: number | boolean
-    createdAt: string
-    updatedAt: string
-  }>(sql, params)
-
-  if (rows) {
-    return rows.map((row) => ({
-      id: Number(row.id),
-      title: row.title,
-      content: row.content,
-      isPublished: toBoolean(row.isPublished),
-      isPinned: toBoolean(row.isPinned),
-      createdAt: row.createdAt,
-      updatedAt: row.updatedAt,
-    }))
-  }
-
-  return [...memoryStore().notices]
-    .filter((notice) => (options.publishedOnly ? notice.isPublished : true))
-    .sort((a, b) => Number(b.isPinned) - Number(a.isPinned) || b.id - a.id)
-    .slice(0, options.limit ? options.limit : undefined)
+  const { data, error } = await supabase.from('notices').select(NOTICE_SELECT).eq('id', id).maybeSingle()
+  if (error) throw new Error(error.message)
+  if (!data) return null
+  return mapNoticeRow(data)
 }
 
 export async function createNotice(input: NoticeInput): Promise<Notice | null> {
-  ensurePersistentWrite('Notice writes')
-  const run = await runQuery(
-    `INSERT INTO notices (
-      title,
-      content,
-      is_published,
-      is_pinned,
-      created_at,
-      updated_at
-    ) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
-    [input.title, input.content, input.isPublished ? 1 : 0, input.isPinned ? 1 : 0]
-  )
-
-  if (run) {
-    const id = Number(run.meta.last_row_id)
-    return firstRow<Notice>(
-      `SELECT
-        id,
-        title,
-        content,
-        is_published AS isPublished,
-        is_pinned AS isPinned,
-        created_at AS createdAt,
-        updated_at AS updatedAt
-      FROM notices
-      WHERE id = ?`,
-      [id]
-    )
+  const supabase = getSupabaseAdmin()
+  if (!supabase) {
+    ensureWritableMemory('공지 등록')
+    const store = memoryStore()
+    const notice: NoticeRecord = {
+      id: store.counters.notice++,
+      title: input.title,
+      content: input.content,
+      isPublished: input.isPublished ?? true,
+      isPinned: input.isPinned ?? false,
+      createdAt: nowText(),
+      updatedAt: nowText(),
+    }
+    store.notices.unshift(notice)
+    return notice
   }
 
-  const store = memoryStore()
-  const notice: NoticeRecord = {
-    id: store.counters.notice++,
-    title: input.title,
-    content: input.content,
-    isPublished: input.isPublished ?? true,
-    isPinned: input.isPinned ?? false,
-    createdAt: nowText(),
-    updatedAt: nowText(),
-  }
+  const { data, error } = await supabase
+    .from('notices')
+    .insert({
+      title: input.title,
+      content: input.content,
+      is_published: input.isPublished ?? true,
+      is_pinned: input.isPinned ?? false,
+    })
+    .select(NOTICE_SELECT)
+    .single()
 
-  store.notices.unshift(notice)
-  return notice
+  if (error) throw new Error(error.message)
+  return mapNoticeRow(data)
 }
 
 export async function updateNotice(id: number, input: NoticeInput): Promise<Notice | null> {
-  ensurePersistentWrite('Notice writes')
-  const run = await runQuery(
-    `UPDATE notices
-      SET title = ?,
-          content = ?,
-          is_published = ?,
-          is_pinned = ?,
-          updated_at = CURRENT_TIMESTAMP
-     WHERE id = ?`,
-    [input.title, input.content, input.isPublished ? 1 : 0, input.isPinned ? 1 : 0, id]
-  )
-
-  if (run) {
-    return firstRow<Notice>(
-      `SELECT
-        id,
-        title,
-        content,
-        is_published AS isPublished,
-        is_pinned AS isPinned,
-        created_at AS createdAt,
-        updated_at AS updatedAt
-      FROM notices
-      WHERE id = ?`,
-      [id]
-    )
+  const supabase = getSupabaseAdmin()
+  if (!supabase) {
+    ensureWritableMemory('공지 수정')
+    const store = memoryStore()
+    const target = store.notices.find((notice) => notice.id === id)
+    if (!target) return null
+    target.title = input.title
+    target.content = input.content
+    target.isPublished = input.isPublished ?? target.isPublished
+    target.isPinned = input.isPinned ?? target.isPinned
+    target.updatedAt = nowText()
+    return target
   }
 
-  const store = memoryStore()
-  const target = store.notices.find((notice) => notice.id === id)
-  if (!target) {
-    return null
-  }
+  const { data, error } = await supabase
+    .from('notices')
+    .update({
+      title: input.title,
+      content: input.content,
+      is_published: input.isPublished ?? true,
+      is_pinned: input.isPinned ?? false,
+      updated_at: nowText(),
+    })
+    .eq('id', id)
+    .select(NOTICE_SELECT)
+    .maybeSingle()
 
-  target.title = input.title
-  target.content = input.content
-  target.isPublished = input.isPublished ?? target.isPublished
-  target.isPinned = input.isPinned ?? target.isPinned
-  target.updatedAt = nowText()
-  return target
+  if (error) throw new Error(error.message)
+  if (!data) return null
+  return mapNoticeRow(data)
 }
 
 export async function deleteNotice(id: number): Promise<boolean> {
-  ensurePersistentWrite('Notice writes')
-  const run = await runQuery('DELETE FROM notices WHERE id = ?', [id])
-  if (run) {
-    return true
+  const supabase = getSupabaseAdmin()
+  if (!supabase) {
+    ensureWritableMemory('공지 삭제')
+    const store = memoryStore()
+    const before = store.notices.length
+    store.notices = store.notices.filter((notice) => notice.id !== id)
+    return before !== store.notices.length
   }
 
-  const store = memoryStore()
-  const before = store.notices.length
-  store.notices = store.notices.filter((notice) => notice.id !== id)
-  return before !== store.notices.length
+  const { error } = await supabase.from('notices').delete().eq('id', id)
+  if (error) throw new Error(error.message)
+  return true
 }
 
-export async function getDashboardSummary(): Promise<DashboardSummary> {
-  const row = await firstRow<{
-    productCount: number
-    pendingInquiryCount: number
-    totalInquiryCount: number
-    noticeCount: number
-  }>(
-    `SELECT
-      (SELECT COUNT(*) FROM products) AS productCount,
-      (SELECT COUNT(*) FROM inquiries WHERE status = 'pending') AS pendingInquiryCount,
-      (SELECT COUNT(*) FROM inquiries) AS totalInquiryCount,
-      (SELECT COUNT(*) FROM notices) AS noticeCount`
-  )
+/* -------------------------------------------------------------------------- */
+/*  대시보드                                                                    */
+/* -------------------------------------------------------------------------- */
 
-  if (row) {
+export async function getDashboardSummary(): Promise<DashboardSummary> {
+  const supabase = getSupabaseAdmin()
+  if (!supabase) {
+    const store = memoryStore()
     return {
-      productCount: Number(row.productCount),
-      pendingInquiryCount: Number(row.pendingInquiryCount),
-      totalInquiryCount: Number(row.totalInquiryCount),
-      noticeCount: Number(row.noticeCount),
+      productCount: store.products.length,
+      pendingInquiryCount: store.inquiries.filter((inquiry) => inquiry.status === 'pending').length,
+      totalInquiryCount: store.inquiries.length,
+      noticeCount: store.notices.length,
     }
   }
 
-  const store = memoryStore()
+  const [products, pending, totalInquiries, notices] = await Promise.all([
+    supabase.from('products').select('*', { count: 'exact', head: true }),
+    supabase.from('inquiries').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+    supabase.from('inquiries').select('*', { count: 'exact', head: true }),
+    supabase.from('notices').select('*', { count: 'exact', head: true }),
+  ])
+
   return {
-    productCount: store.products.length,
-    pendingInquiryCount: store.inquiries.filter((inquiry) => inquiry.status === 'pending').length,
-    totalInquiryCount: store.inquiries.length,
-    noticeCount: store.notices.length,
+    productCount: products.count ?? 0,
+    pendingInquiryCount: pending.count ?? 0,
+    totalInquiryCount: totalInquiries.count ?? 0,
+    noticeCount: notices.count ?? 0,
   }
 }
+
+export { hasSupabase }

@@ -1,9 +1,8 @@
-export const runtime = 'edge'
 
 import { NextResponse } from 'next/server'
 import { createSlug, jsonError, requireAdmin } from '@/lib/api'
 import { deleteProduct, updateProduct } from '@/lib/db'
-import { deleteR2Object } from '@/lib/r2'
+import { deleteStorageObject } from '@/lib/storage'
 
 function parseId(value: string): number {
   return Number(value)
@@ -78,7 +77,7 @@ export async function DELETE(
     return jsonError('제품을 찾을 수 없습니다.', 404)
   }
 
-  await Promise.all(result.imageKeys.map((key) => deleteR2Object(key)))
+  await Promise.all(result.imageKeys.map((key) => deleteStorageObject(key)))
 
   return NextResponse.json({ ok: true })
 }

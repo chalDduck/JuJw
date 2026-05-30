@@ -1,9 +1,0 @@
-name = "jujw"
-compatibility_date = "2026-02-14"
-compatibility_flags = ["nodejs_compat"]
-
-# Configure D1 / R2 bindings in the Cloudflare Pages project settings
-# or local development environment before running preview/deploy flows.
-
-[vars]
-SITE_URL = "https://jujw.pages.dev"

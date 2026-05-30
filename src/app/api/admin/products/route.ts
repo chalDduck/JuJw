@@ -1,4 +1,3 @@
-export const runtime = 'edge'
 
 import { NextResponse } from 'next/server'
 import { createSlug, jsonError, requireAdmin } from '@/lib/api'

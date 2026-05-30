@@ -8,4 +8,8 @@ tsconfig.tsbuildinfo
 .env
 .env.local
 .env.*.local
+.dev.vars
+KeyDOc
 *.log
+.vercel
+supabase/.temp

@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "ju-jewelry",
+  "name": "jujw",
   "main": ".open-next/worker.js",
   "compatibility_date": "2026-03-16",
   "compatibility_flags": ["nodejs_compat"],
@@ -11,21 +11,11 @@
   "observability": {
     "enabled": true
   },
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "ju-jewelry-db",
-      "database_id": "replace-with-your-d1-database-id"
-    }
-  ],
-  "r2_buckets": [
-    {
-      "binding": "BUCKET",
-      "bucket_name": "ju-jewelry-assets"
-    },
-    {
-      "binding": "NEXT_INC_CACHE_R2_BUCKET",
-      "bucket_name": "ju-jewelry-cache"
-    }
-  ]
+  "vars": {
+    "SITE_URL": "https://jujw.fnvlzl95.workers.dev"
+  }
+  // 데이터/이미지는 Supabase(HTTP)로 처리하므로 D1/R2 바인딩은 필요 없습니다.
+  // 비밀값은 코드/저장소에 두지 말고 `wrangler secret put <NAME>` 으로 등록하세요:
+  //   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, JWT_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD
+  //   (선택) SUPABASE_STORAGE_BUCKET  기본값 product-images
 }

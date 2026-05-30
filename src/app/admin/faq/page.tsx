@@ -1,6 +1,5 @@
 'use client'
 
-export const runtime = 'edge'
 
 import { FormEvent, useEffect, useMemo, useState } from 'react'
 import { DEFAULT_FAQ_CATEGORIES, DEFAULT_FAQS, FaqItem, parseFaqItems } from '@/lib/faq'

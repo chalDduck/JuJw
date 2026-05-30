@@ -1,6 +1,5 @@
 'use client'
 
-export const runtime = 'edge'
 
 import { useEffect, useMemo, useState } from 'react'
 import { PhoneCall } from 'lucide-react'

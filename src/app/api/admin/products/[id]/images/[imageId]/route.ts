@@ -1,9 +1,8 @@
-export const runtime = 'edge'
 
 import { NextResponse } from 'next/server'
 import { jsonError, requireAdmin } from '@/lib/api'
 import { deleteProductImage, setPrimaryProductImage } from '@/lib/db'
-import { deleteR2Object } from '@/lib/r2'
+import { deleteStorageObject } from '@/lib/storage'
 
 type RouteContext = {
   params: {
@@ -54,7 +53,7 @@ export async function DELETE(request: Request, context: RouteContext) {
     }
 
     if (result.imageKey) {
-      await deleteR2Object(result.imageKey)
+      await deleteStorageObject(result.imageKey)
     }
 
     return NextResponse.json({ ok: true })

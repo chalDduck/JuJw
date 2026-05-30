@@ -1,6 +1,5 @@
 import type { NextRequest } from 'next/server'
-import { getAdminByEmail } from '@/lib/db'
-import { getCloudflareEnv, getJwtSecret } from '@/lib/env'
+import { getAdminEmail, getAdminPassword, getJwtSecret, isHttpsSite } from '@/lib/env'
 
 export const ADMIN_AUTH_COOKIE = 'jujw_admin_token'
 const TOKEN_TTL_SECONDS = 60 * 60 * 24 * 7
@@ -155,16 +154,12 @@ export async function getAdminSessionFromRequest(
 }
 
 export function createAuthCookie(token: string): string {
-  const env = getCloudflareEnv()
-  const isHttps = env.SITE_URL?.startsWith('https') ?? false
-  const secure = isHttps ? '; Secure' : ''
+  const secure = isHttpsSite() ? '; Secure' : ''
   return `${ADMIN_AUTH_COOKIE}=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${TOKEN_TTL_SECONDS}${secure}`
 }
 
 export function clearAuthCookie(): string {
-  const env = getCloudflareEnv()
-  const isHttps = env.SITE_URL?.startsWith('https') ?? false
-  const secure = isHttps ? '; Secure' : ''
+  const secure = isHttpsSite() ? '; Secure' : ''
   return `${ADMIN_AUTH_COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secure}`
 }
 
@@ -218,6 +213,8 @@ export async function verifyAdminCredentials(
   email: string,
   password: string
 ): Promise<AdminSession | null> {
+  // db는 동적 import: 미들웨어(엣지) 번들에 Supabase가 포함되지 않도록 함
+  const { getAdminByEmail } = await import('@/lib/db')
   const admin = await getAdminByEmail(email)
 
   if (admin) {
@@ -233,9 +230,8 @@ export async function verifyAdminCredentials(
     }
   }
 
-  const cfEnv = getCloudflareEnv()
-  const fallbackEmail = cfEnv.ADMIN_EMAIL ?? process.env.ADMIN_EMAIL
-  const fallbackPassword = cfEnv.ADMIN_PASSWORD ?? process.env.ADMIN_PASSWORD
+  const fallbackEmail = getAdminEmail()
+  const fallbackPassword = getAdminPassword()
 
   if (
     fallbackEmail &&

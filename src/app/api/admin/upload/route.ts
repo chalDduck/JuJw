@@ -1,9 +1,8 @@
-export const runtime = 'edge'
 
 import { NextResponse } from 'next/server'
 import { jsonError, requireAdmin } from '@/lib/api'
 import { addProductImage } from '@/lib/db'
-import { uploadProductImageToR2 } from '@/lib/r2'
+import { uploadProductImage } from '@/lib/storage'
 
 export async function POST(request: Request) {
   const auth = await requireAdmin(request)
@@ -35,7 +34,7 @@ export async function POST(request: Request) {
 
     for (let index = 0; index < files.length; index += 1) {
       const file = files[index]
-      const uploaded = await uploadProductImageToR2({
+      const uploaded = await uploadProductImage({
         productId,
         file,
       })

@@ -75,6 +75,11 @@ export default async function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/notices" className="inline-flex min-h-[36px] items-center text-stone-400 transition-colors hover:text-white">
+                  공지사항
+                </Link>
+              </li>
+              <li>
                 <Link href="/location" className="inline-flex min-h-[36px] items-center text-stone-400 transition-colors hover:text-white">
                   오시는 길
                 </Link>

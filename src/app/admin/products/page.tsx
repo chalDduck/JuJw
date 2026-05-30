@@ -1,9 +1,8 @@
 'use client'
 
-export const runtime = 'edge'
 /* eslint-disable @next/next/no-img-element */
 
-import { ChangeEvent, FormEvent, ReactNode, useEffect, useMemo, useState } from 'react'
+import { ChangeEvent, FormEvent, ReactNode, Suspense, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Camera, ImagePlus, Save, Search, Trash2 } from 'lucide-react'
 
@@ -64,6 +63,14 @@ function normalizeImageUrl(url: string | null | undefined): string {
 }
 
 export default function AdminProductsPage() {
+  return (
+    <Suspense fallback={<p className="p-6 text-[15px] text-stone-500">불러오는 중입니다…</p>}>
+      <ProductsManager />
+    </Suspense>
+  )
+}
+
+function ProductsManager() {
   const searchParams = useSearchParams()
   const [categories, setCategories] = useState<Category[]>([])
   const [products, setProducts] = useState<Product[]>([])

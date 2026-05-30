@@ -45,10 +45,12 @@ body {
   font-family: var(--font-body);
 }
 
-main,
-main * {
-  font-family: var(--font-body) !important;
+main {
+  font-family: var(--font-body);
 }
+
+/* 디스플레이/세리프 의도를 살리기 위해 본문 폰트는 강제하지 않습니다.
+   .font-display / .font-serif / 인라인 serif 스타일이 정상 적용됩니다. */
 
 .hero-brand-mark {
   font-family: var(--font-display), serif !important;

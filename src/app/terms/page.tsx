@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { getPublicSettings } from '@/lib/db'
 import { normalizeSiteSettings } from '@/lib/site-settings'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: '이용약관',
   description: 'JU JEWELRY 사이트 이용 및 상담 거래 안내 약관',

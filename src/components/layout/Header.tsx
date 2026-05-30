@@ -11,6 +11,7 @@ const navigation = [
   { label: '브랜드 스토리', href: '/about' },
   { label: '거래 안내', href: '/trade' },
   { label: '오시는 길', href: '/location' },
+  { label: '공지사항', href: '/notices' },
   { label: 'FAQ', href: '/faq' },
 ] as const
 

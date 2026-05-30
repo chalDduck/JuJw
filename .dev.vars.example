@@ -1,5 +1,12 @@
-NEXTJS_ENV=development
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
-SESSION_SECRET=replace-with-a-long-random-secret
+# Cloudflare 로컬 미리보기(opennextjs-cloudflare preview)용 예시 파일.
+# 복사해서 `.dev.vars` 로 만들고 값을 채우세요. (`.dev.vars` 는 git에 올리지 않습니다)
+
+SUPABASE_URL=https://YOUR-PROJECT.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=YOUR-SERVICE-ROLE-KEY
+SUPABASE_STORAGE_BUCKET=product-images
+
 ADMIN_EMAIL=admin@jujewelry.kr
-ADMIN_PASSWORD=admin1234!
+ADMIN_PASSWORD=use-a-strong-password
+
+JWT_SECRET=replace-with-a-long-random-secret
+SITE_URL=http://localhost:8787
