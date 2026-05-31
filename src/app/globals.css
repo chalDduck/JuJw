@@ -126,6 +126,12 @@ body.location-reference-page [data-location-shell] {
   font-family: var(--font-body) !important;
 }
 
+body.notices-reference-page [data-site-header],
+body.notices-reference-page [data-site-header-overlay],
+body.notices-reference-page [data-site-footer] {
+  display: none;
+}
+
 .admin-flat-shell {
   --admin-radius: 4px;
   --admin-line: #d8d0c6;
