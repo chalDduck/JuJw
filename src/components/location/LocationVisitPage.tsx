@@ -17,7 +17,7 @@ import {
 } from 'lucide-react'
 import ShowcaseImage from '@/components/media/ShowcaseImage'
 import { cn } from '@/lib/utils'
-import { KAKAO_OPENCHAT_URL } from '@/lib/site-links'
+import { GOOGLE_MAPS_EMBED_URL, GOOGLE_MAPS_PLACE_URL, KAKAO_OPENCHAT_URL } from '@/lib/site-links'
 import type { SiteSettings } from '@/lib/site-settings'
 
 type LocationVisitPageProps = {
@@ -101,10 +101,10 @@ export default function LocationVisitPage({ settings }: LocationVisitPageProps) 
     { href: KAKAO_OPENCHAT_URL, label: '카카오톡', Icon: MessageCircle },
   ]
 
-  // 구글 지도: 주소에서 호수(예: ", 143호")를 떼고 건물 주소로 검색
+  // 구글 지도: ju주얼리 실제 장소(좌표 기반)로 고정
   const mapQuery = settings.address.split(',')[0]?.trim() || settings.address
-  const googleMapEmbed = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&hl=ko&z=17&output=embed`
-  const googleMapLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`
+  const googleMapEmbed = GOOGLE_MAPS_EMBED_URL
+  const googleMapLink = GOOGLE_MAPS_PLACE_URL
 
   return (
     <div data-location-shell className="bg-[#f6f1ea] text-[#433228]">
