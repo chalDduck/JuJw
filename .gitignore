@@ -13,3 +13,4 @@ KeyDOc
 *.log
 .vercel
 supabase/.temp
+tmp/
