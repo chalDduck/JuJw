@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { ReactNode, useEffect, useState } from 'react'
 import { ArrowRight, Facebook, Instagram, Menu, X } from 'lucide-react'
+import ShowcaseImage from '@/components/media/ShowcaseImage'
 import { cn } from '@/lib/utils'
 import type { SiteSettings } from '@/lib/site-settings'
 
@@ -25,10 +26,21 @@ type NoticesShellProps = {
   settings: SiteSettings
   heroTitle: string
   heroSubtitle?: string
+  heroKicker?: string
+  summaryItems?: Array<{ label: string; value: string }>
+  contentWidth?: 'wide' | 'narrow'
   children: ReactNode
 }
 
-export default function NoticesShell({ settings, heroTitle, heroSubtitle, children }: NoticesShellProps) {
+export default function NoticesShell({
+  settings,
+  heroTitle,
+  heroSubtitle,
+  heroKicker = 'Notice',
+  summaryItems = [],
+  contentWidth = 'wide',
+  children,
+}: NoticesShellProps) {
   const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
@@ -118,10 +130,17 @@ export default function NoticesShell({ settings, heroTitle, heroSubtitle, childr
         </aside>
       </div>
 
-      {/* 히어로 */}
-      <section className="relative isolate min-h-[360px] overflow-hidden bg-[#5d483a] sm:min-h-[420px] md:min-h-[480px]">
-        <div className="absolute inset-0 bg-[linear-gradient(135deg,#52402f_0%,#5d483a_42%,#6b513c_100%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_30%,rgba(255,228,196,0.16),transparent_42%)]" />
+      <section className="relative isolate min-h-[560px] overflow-hidden bg-[#4b382d] sm:min-h-[620px] md:min-h-[760px]">
+        <ShowcaseImage
+          src="/img/notices-generated/notices-hero-desktop.png"
+          mobileSrc="/img/notices-generated/notices-hero-mobile.png"
+          alt="공지사항 히어로 이미지"
+          loading="eager"
+          className="absolute inset-0 h-full w-full bg-[#4b382d]"
+          imageClassName="object-cover object-center md:object-center"
+        />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(38,25,18,0.92)_0%,rgba(48,33,24,0.72)_34%,rgba(49,35,26,0.28)_100%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_24%_44%,rgba(255,226,190,0.12),transparent_25%)]" />
 
         <div className="absolute inset-x-0 top-0 z-20">
           <div className="mx-auto flex max-w-[1440px] items-center justify-between px-6 pt-6 sm:px-10 sm:pt-8">
@@ -139,25 +158,57 @@ export default function NoticesShell({ settings, heroTitle, heroSubtitle, childr
           </div>
         </div>
 
-        <div className="relative z-10 mx-auto flex min-h-[360px] max-w-[1440px] items-center px-5 pb-14 pt-24 sm:min-h-[420px] sm:px-6 sm:pb-16 sm:pt-28 md:min-h-[480px] md:px-10 md:pt-32">
-          <div className="max-w-[500px] text-white">
+        <div className="relative z-10 mx-auto flex min-h-[560px] max-w-[1440px] items-center px-5 pb-16 pt-24 sm:min-h-[620px] sm:px-6 sm:pb-20 sm:pt-28 md:min-h-[760px] md:px-10 md:pt-32">
+          <div className="max-w-[520px] text-white">
             <div className="mb-5 flex items-center gap-4 text-[#dfc7aa]">
               <span className="h-px w-12 bg-current/60" />
               <span className="h-1.5 w-1.5 rounded-full bg-current/80" />
               <span className="h-px w-20 bg-current/35" />
             </div>
-            <p className="font-display text-[11px] font-medium uppercase tracking-[0.28em] text-[#dfc7aa]">Notice</p>
-            <h1 className="mt-3 text-[2.65rem] font-semibold leading-[1.14] sm:text-[3.8rem]">{heroTitle}</h1>
+            <p className="font-display text-[11px] font-medium uppercase tracking-[0.28em] text-[#dfc7aa]">
+              {heroKicker}
+            </p>
+            <h1 className="mt-5 text-[2.65rem] font-semibold leading-[1.14] sm:text-[4.1rem]">{heroTitle}</h1>
             {heroSubtitle ? (
-              <p className="mt-5 text-[1rem] leading-8 text-[#f1e6da] sm:text-[1.1rem] sm:leading-9">{heroSubtitle}</p>
+              <p className="mt-6 text-[1rem] leading-8 text-[#f1e6da] sm:text-[1.12rem] sm:leading-9">{heroSubtitle}</p>
             ) : null}
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link
+                href="/contact"
+                className="inline-flex min-h-[48px] items-center justify-center gap-3 border border-[#d3b18a] px-5 text-[12px] font-semibold uppercase tracking-[0.2em] text-[#f5e3cb] transition-colors hover:bg-white/10"
+              >
+                문의하기
+                <ArrowRight size={15} strokeWidth={1.7} />
+              </Link>
+            </div>
           </div>
         </div>
       </section>
 
+      {summaryItems.length > 0 ? (
+        <section className="border-b border-[#e4d9cd] bg-[#fbf8f4]">
+          <div className="mx-auto grid max-w-[1320px] gap-0 px-4 py-5 sm:px-6 md:grid-cols-3 md:px-8">
+            {summaryItems.map((item, index) => (
+              <article
+                key={item.label}
+                className={cn(
+                  'border-b border-[#e7ddd1] px-4 py-5 md:border-b-0 md:px-6',
+                  index < summaryItems.length - 1 ? 'md:border-r' : ''
+                )}
+              >
+                <p className="text-[13px] font-semibold tracking-[0.12em] text-[#a77c52]">{item.label}</p>
+                <p className="mt-2 text-[14px] leading-7 text-[#5d483a]">{item.value}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
       {/* 본문 */}
       <section className="px-4 py-12 sm:px-6 md:px-8 md:py-16">
-        <div className="mx-auto max-w-3xl">{children}</div>
+        <div className={cn('mx-auto', contentWidth === 'narrow' ? 'max-w-3xl' : 'max-w-[1120px]')}>
+          {children}
+        </div>
       </section>
 
       {/* 푸터 */}

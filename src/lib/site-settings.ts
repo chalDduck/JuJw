@@ -63,13 +63,13 @@ export type SiteSettings = {
 
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   shopName: 'JU JEWELRY',
-  phonePrimary: '02-123-4567',
-  phoneSecondary: '010-9876-5432',
+  phonePrimary: '02-236-6268',
+  phoneSecondary: '',
   email: 'contact@jujewelry.com',
-  address: '서울특별시 종로구 돈화문로 10길 15 (묘동)',
+  address: '서울 종로구 종로 173, 143호',
   businessHours: '평일 10:30 - 19:30 / 주말 11:00 - 18:30',
   closedDay: '화요일 휴무',
-  naverMapUrl: 'https://map.naver.com',
+  naverMapUrl: 'https://map.naver.com/p/search/서울 종로구 종로 173',
   instagramUrl: '',
   facebookUrl: '',
   businessName: 'JU JEWELRY',

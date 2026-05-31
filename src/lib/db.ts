@@ -41,13 +41,13 @@ type NoticeRecord = Notice
 
 const DEFAULT_SETTINGS: SettingsMap = {
   shop_name: 'JU JEWELRY',
-  phone_primary: '02-123-4567',
-  phone_secondary: '010-9876-5432',
+  phone_primary: '02-236-6268',
+  phone_secondary: '',
   email: 'contact@jujewelry.com',
-  address: '서울특별시 종로구 돈화문로 10길 15 (묘동)',
+  address: '서울 종로구 종로 173, 143호',
   business_hours: '평일 10:30 - 19:30 / 주말 11:00 - 18:30',
   closed_day: '화요일 휴무',
-  naver_map_url: 'https://map.naver.com',
+  naver_map_url: 'https://map.naver.com/p/search/서울 종로구 종로 173',
   instagram_url: '',
   facebook_url: '',
   business_name: 'JU JEWELRY',

@@ -100,6 +100,11 @@ export default function LocationVisitPage({ settings }: LocationVisitPageProps) 
     { href: settings.facebookUrl || '/contact', label: 'Facebook', Icon: Facebook },
   ]
 
+  // 구글 지도: 주소에서 호수(예: ", 143호")를 떼고 건물 주소로 검색
+  const mapQuery = settings.address.split(',')[0]?.trim() || settings.address
+  const googleMapEmbed = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&hl=ko&z=17&output=embed`
+  const googleMapLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`
+
   return (
     <div data-location-shell className="bg-[#f6f1ea] text-[#433228]">
       <div
@@ -250,12 +255,17 @@ export default function LocationVisitPage({ settings }: LocationVisitPageProps) 
             </div>
           </div>
 
-          <ShowcaseImage
-            src="/img/location-generated/location-visit-panel.png"
-            alt="방문 안내 비주얼"
-            className="min-h-[300px] overflow-hidden border border-[#e3d6c8] bg-[#efe7dc] md:min-h-[380px]"
-            imageClassName="object-cover object-center"
-          />
+          <div className="min-h-[300px] overflow-hidden border border-[#e3d6c8] bg-[#efe7dc] md:min-h-[420px]">
+            <iframe
+              title={`구글 지도 - ${mapQuery}`}
+              src={googleMapEmbed}
+              className="h-full min-h-[300px] w-full md:min-h-[420px]"
+              style={{ border: 0 }}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              allowFullScreen
+            />
+          </div>
         </div>
       </section>
 
@@ -360,12 +370,12 @@ export default function LocationVisitPage({ settings }: LocationVisitPageProps) 
 
           <div className="flex flex-col justify-center gap-3 border-t border-[#decfbe] px-6 py-6 sm:gap-4 sm:px-8 sm:py-8 md:border-l md:border-t-0">
             <a
-              href={settings.naverMapUrl}
+              href={googleMapLink}
               target="_blank"
               rel="noreferrer"
               className="inline-flex min-h-[58px] items-center justify-center gap-3 bg-[#4b382d] px-6 text-[14px] tracking-[0.08em] text-white transition-colors hover:bg-[#3f2f26]"
             >
-              지도 열기
+              구글 지도 열기
               <ArrowRight size={16} strokeWidth={1.7} />
             </a>
             <Link
