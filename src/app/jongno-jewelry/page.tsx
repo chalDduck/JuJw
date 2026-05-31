@@ -1,10 +1,12 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { buildPageMetadata } from '@/lib/metadata'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: '종로 귀금속 도매',
   description: '종로 귀금속 상권에서 신뢰할 수 있는 주얼리 도매 파트너 JU JEWELRY',
-}
+  path: '/jongno-jewelry',
+})
 
 export default function JongnoJewelryPage() {
   return (

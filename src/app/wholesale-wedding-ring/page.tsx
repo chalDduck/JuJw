@@ -1,10 +1,12 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { buildPageMetadata } from '@/lib/metadata'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: '예물 반지 도매',
   description: '웨딩/예물 반지 도매 상담, 맞춤 제작 대응, 종로 기반 빠른 리드타임',
-}
+  path: '/wholesale-wedding-ring',
+})
 
 export default function WholesaleWeddingRingPage() {
   return (

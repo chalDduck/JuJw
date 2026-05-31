@@ -1,9 +1,11 @@
 import type { Metadata } from 'next'
+import { buildPageMetadata } from '@/lib/metadata'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: '구매 가이드',
   description: '반지 사이즈, 금속 종류, 보증서 확인 등 주얼리 구매 가이드',
-}
+  path: '/guide',
+})
 
 export default function GuidePage() {
   return (
