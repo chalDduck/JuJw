@@ -52,7 +52,7 @@ const DEFAULT_SETTINGS: SettingsMap = {
   facebook_url: '',
   business_name: 'JU JEWELRY',
   representative_name: '',
-  business_number: '',
+  business_number: '206-17-48634',
   home_hero_line_1: '오래 간직할 수 있는 빛,',
   home_hero_line_2: 'Ju가 차분히 제안합니다',
   home_hero_cta: '컬렉션 보기',

@@ -74,7 +74,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   facebookUrl: '',
   businessName: 'JU JEWELRY',
   representativeName: '',
-  businessNumber: '',
+  businessNumber: '206-17-48634',
   homeHeroLine1: '오래 간직할 수 있는 빛,',
   homeHeroLine2: 'Ju가 차분히 제안합니다',
   homeHeroCta: '컬렉션 보기',
