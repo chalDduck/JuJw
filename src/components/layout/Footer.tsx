@@ -56,7 +56,7 @@ export default async function Footer() {
             ) : null}
           </div>
 
-          <div>
+          <div className="hidden sm:block">
             <h4 className="mb-4 text-sm font-normal tracking-wide text-white md:mb-6">메뉴</h4>
             <ul className="space-y-2 text-sm font-light md:space-y-3">
               <li>
@@ -87,7 +87,7 @@ export default async function Footer() {
             </ul>
           </div>
 
-          <div>
+          <div className="hidden sm:block">
             <h4 className="mb-4 text-sm font-normal tracking-wide text-white md:mb-6">서비스</h4>
             <ul className="space-y-2 text-sm font-light text-stone-400 md:space-y-3">
               <li>도매 거래</li>

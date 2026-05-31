@@ -487,7 +487,7 @@ export default function AboutBrandStoryPage({ settings }: AboutBrandStoryPagePro
           </div>
 
           {footerColumns.map((column) => (
-            <div key={column.title}>
+            <div key={column.title} className="hidden md:block">
               <p className="text-[13px] font-medium tracking-[0.14em] text-[#d3b89c]">
                 {column.title}
               </p>

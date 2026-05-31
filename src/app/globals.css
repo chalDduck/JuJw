@@ -176,6 +176,13 @@ section[id] {
   }
 }
 
+/* 모바일: 하단 플로팅 CTA 바가 푸터 하단을 가리지 않도록 여백 확보 */
+@media (max-width: 767px) {
+  footer {
+    padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
 ::selection {
   background: #a08c5b;
   color: #ffffff;

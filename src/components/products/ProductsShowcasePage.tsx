@@ -602,7 +602,7 @@ export default function ProductsShowcasePage({
               </p>
             </div>
 
-            <div>
+            <div className="hidden md:block">
               <p className="text-[13px] tracking-[0.24em] text-[#f3e5da]">SHOP</p>
               <div className="mt-5 space-y-3 text-[14px] text-[#ccb8aa]">
                 <Link href="/products" className="block transition-colors hover:text-white">
@@ -620,7 +620,7 @@ export default function ProductsShowcasePage({
               </div>
             </div>
 
-            <div>
+            <div className="hidden md:block">
               <p className="text-[13px] tracking-[0.24em] text-[#f3e5da]">CUSTOMER</p>
               <div className="mt-5 space-y-3 text-[14px] text-[#ccb8aa]">
                 <Link href="/faq" className="block transition-colors hover:text-white">
@@ -638,7 +638,7 @@ export default function ProductsShowcasePage({
               </div>
             </div>
 
-            <div>
+            <div className="hidden md:block">
               <p className="text-[13px] tracking-[0.24em] text-[#f3e5da]">ABOUT US</p>
               <div className="mt-5 space-y-3 text-[14px] text-[#ccb8aa]">
                 <Link href="/about" className="block transition-colors hover:text-white">

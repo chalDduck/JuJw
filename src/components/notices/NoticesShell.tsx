@@ -237,7 +237,7 @@ export default function NoticesShell({
           </div>
 
           {footerColumns.map((column) => (
-            <div key={column.title}>
+            <div key={column.title} className="hidden md:block">
               <p className="font-display text-[13px] font-medium tracking-[0.14em] text-[#d3b89c]">{column.title}</p>
               <ul className="mt-4 space-y-2 text-[14px] leading-7 text-white/68">
                 {column.items.map((item) => (

@@ -564,7 +564,7 @@ export default function HomeView({
             </div>
 
             {footerGroups.map((group) => (
-              <div key={group.title}>
+              <div key={group.title} className="hidden md:block">
                 <h3 className="font-display text-[12px] uppercase tracking-[0.22em] text-[#d7b996]">{group.title}</h3>
                 <ul className="mt-5 space-y-3 text-[14px] text-white/70">
                   {group.links.map((item) => (

@@ -3,6 +3,8 @@ import { Cormorant_Garamond } from 'next/font/google'
 import './globals.css'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
+import FloatingCTA from '@/components/layout/FloatingCTA'
+import { getSiteUrl } from '@/lib/env'
 
 const display = Cormorant_Garamond({
   subsets: ['latin'],
@@ -11,7 +13,13 @@ const display = Cormorant_Garamond({
   display: 'swap',
 })
 
-const siteUrl = process.env.SITE_URL || 'https://jujw.pages.dev'
+const siteUrl = getSiteUrl().replace(/\/$/, '')
+const googleVerification = process.env.GOOGLE_SITE_VERIFICATION
+const naverVerification = process.env.NAVER_SITE_VERIFICATION
+const verification = {
+  ...(googleVerification ? { google: googleVerification } : {}),
+  ...(naverVerification ? { other: { 'naver-site-verification': naverVerification } } : {}),
+}
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -29,10 +37,10 @@ export const metadata: Metadata = {
     siteName: 'JU JEWELRY',
     images: [
       {
-        url: '/img/hero/hero.png',
+        url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'JU JEWELRY',
+        alt: 'JU JEWELRY 주얼리 쇼룸',
       },
     ],
     locale: 'ko_KR',
@@ -43,16 +51,15 @@ export const metadata: Metadata = {
     title: 'JU JEWELRY | 종로 귀금속 도매',
     description:
       '종로 종묘귀금속에 위치한 주얼리 도매 전문점. 반지, 목걸이, 귀걸이, 팔찌 등 다양한 귀금속 제품을 제공합니다.',
-    images: ['/img/hero/hero.png'],
-  },
-  alternates: {
-    canonical: '/',
+    images: ['/og-image.png'],
   },
   icons: {
-    icon: '/img/hero/hero.png',
-    shortcut: '/img/hero/hero.png',
-    apple: '/img/hero/hero.png',
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/apple-icon.png',
   },
+  manifest: '/manifest.webmanifest',
+  ...(Object.keys(verification).length > 0 ? { verification } : {}),
 }
 
 export default function RootLayout({
@@ -66,6 +73,7 @@ export default function RootLayout({
         <Header />
         <main className="min-h-screen">{children}</main>
         <Footer />
+        <FloatingCTA />
       </body>
     </html>
   )
