@@ -1,7 +1,8 @@
 import Link from 'next/link'
-import { Facebook, Instagram } from 'lucide-react'
+import { Instagram, MessageCircle } from 'lucide-react'
 import { getPublicSettings } from '@/lib/db'
 import { getContactLines, normalizeSiteSettings } from '@/lib/site-settings'
+import { KAKAO_OPENCHAT_URL } from '@/lib/site-links'
 
 export default async function Footer() {
   const settings = normalizeSiteSettings(await getPublicSettings())
@@ -28,32 +29,28 @@ export default async function Footer() {
                   .join(' / ')}
               </p>
             ) : null}
-            {settings.instagramUrl || settings.facebookUrl ? (
-              <div className="mt-4 flex gap-2">
-                {settings.instagramUrl ? (
-                  <a
-                    href={settings.instagramUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label="Instagram"
-                    className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-white/10 text-stone-500 transition-colors hover:border-white/20 hover:text-white"
-                  >
-                    <Instagram size={18} />
-                  </a>
-                ) : null}
-                {settings.facebookUrl ? (
-                  <a
-                    href={settings.facebookUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label="Facebook"
-                    className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-white/10 text-stone-500 transition-colors hover:border-white/20 hover:text-white"
-                  >
-                    <Facebook size={18} />
-                  </a>
-                ) : null}
-              </div>
-            ) : null}
+            <div className="mt-4 flex gap-2">
+              {settings.instagramUrl ? (
+                <a
+                  href={settings.instagramUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Instagram"
+                  className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-white/10 text-stone-500 transition-colors hover:border-white/20 hover:text-white"
+                >
+                  <Instagram size={18} />
+                </a>
+              ) : null}
+              <a
+                href={KAKAO_OPENCHAT_URL}
+                target="_blank"
+                rel="noreferrer"
+                aria-label="카카오톡 오픈채팅"
+                className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-white/10 text-stone-500 transition-colors hover:border-white/20 hover:text-white"
+              >
+                <MessageCircle size={18} />
+              </a>
+            </div>
           </div>
 
           <div className="hidden sm:block">

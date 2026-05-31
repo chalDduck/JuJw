@@ -6,6 +6,7 @@ import ShowcaseImage from '@/components/media/ShowcaseImage'
 import JsonLd from '@/components/seo/JsonLd'
 import { getProductBySlug, getProductImages } from '@/lib/db'
 import { getSiteUrl } from '@/lib/env'
+import { buildPageMetadata } from '@/lib/metadata'
 
 export const dynamic = 'force-dynamic'
 
@@ -40,13 +41,20 @@ export async function generateMetadata({
     }
   }
 
-  return {
+  const imageUrl =
+    product.imageUrl &&
+    product.imageUrl !== GENERIC_PRODUCT_PLACEHOLDER &&
+    !product.imageUrl.startsWith('products/')
+      ? product.imageUrl
+      : categoryFallbackImages[decodeParam(params.category)]?.[0] ?? '/og-image.png'
+
+  return buildPageMetadata({
     title: `${product.name} 도매`,
     description: product.spec || product.description || `${product.name} 상세 정보`,
-    alternates: {
-      canonical: `/products/${params.category}/${params.slug}`,
-    },
-  }
+    path: `/products/${params.category}/${params.slug}`,
+    image: imageUrl,
+    imageAlt: product.name,
+  })
 }
 
 export default async function ProductDetailPage({
@@ -93,11 +101,14 @@ export default async function ProductDetailPage({
           ],
           sku: String(product.id),
           category: product.categoryName || params.category,
+          brand: {
+            '@type': 'Brand',
+            name: 'JU JEWELRY',
+          },
           offers: {
             '@type': 'Offer',
             availability: 'https://schema.org/InStock',
             priceCurrency: 'KRW',
-            price: '0',
             url: productUrl,
           },
         }}

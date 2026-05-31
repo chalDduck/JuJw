@@ -5,8 +5,8 @@ import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { MapPin, MessageCircle, Phone } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { KAKAO_OPENCHAT_URL } from '@/lib/site-links'
 
-const KAKAO_OPENCHAT = 'https://open.kakao.com/o/snyzjqxi'
 const DEFAULT_PHONE = '02-744-6268'
 
 export default function FloatingCTA() {
@@ -47,7 +47,7 @@ export default function FloatingCTA() {
   const telHref = `tel:${phone.replace(/[^0-9+]/g, '')}`
 
   const items = [
-    { key: 'kakao', label: '카톡상담', href: KAKAO_OPENCHAT, external: true, Icon: MessageCircle },
+    { key: 'kakao', label: '카톡상담', href: KAKAO_OPENCHAT_URL, external: true, Icon: MessageCircle },
     { key: 'call', label: '전화상담', href: telHref, external: true, Icon: Phone },
     { key: 'map', label: '오시는길', href: '/location', external: false, Icon: MapPin },
   ] as const

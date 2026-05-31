@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import {
   ArrowRight,
   CreditCard,
-  Facebook,
+  MessageCircle,
   FileText,
   Instagram,
   Menu,
@@ -19,6 +19,7 @@ import {
 import ShowcaseImage from '@/components/media/ShowcaseImage'
 import { processSteps, tradeTerms } from '@/content/static'
 import { cn } from '@/lib/utils'
+import { KAKAO_OPENCHAT_URL } from '@/lib/site-links'
 import type { SiteSettings } from '@/lib/site-settings'
 
 type TradeInformationPageProps = {
@@ -106,7 +107,7 @@ export default function TradeInformationPage({ settings }: TradeInformationPageP
 
   const socialLinks = [
     { href: settings.instagramUrl || '/contact', label: 'Instagram', Icon: Instagram },
-    { href: settings.facebookUrl || '/contact', label: 'Facebook', Icon: Facebook },
+    { href: KAKAO_OPENCHAT_URL, label: '카카오톡', Icon: MessageCircle },
   ]
 
   return (

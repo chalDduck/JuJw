@@ -4,13 +4,13 @@ import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import {
   ArrowRight,
-  Facebook,
   Gift,
   Headphones,
   Instagram,
   Mail,
   MapPin,
   Menu,
+  MessageCircle,
   Phone,
   UserRound,
   X,
@@ -18,6 +18,7 @@ import {
 import ShowcaseImage from '@/components/media/ShowcaseImage'
 import { cn } from '@/lib/utils'
 import { resolveProductHref, resolveProductImage, trimText } from '@/lib/product-display'
+import { KAKAO_OPENCHAT_URL } from '@/lib/site-links'
 import type { Category, Product } from '@/lib/models'
 import type { SiteSettings } from '@/lib/site-settings'
 
@@ -570,32 +571,28 @@ export default function ProductsShowcasePage({
                 당신의 일상에 주얼리를.
               </p>
 
-              {(settings.instagramUrl || settings.facebookUrl) ? (
-                <div className="mt-6 flex gap-3">
-                  {settings.instagramUrl ? (
-                    <a
-                      href={settings.instagramUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      aria-label="Instagram"
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/12 text-[#ddcbbf] transition-colors hover:border-white/25 hover:text-white"
-                    >
-                      <Instagram size={16} strokeWidth={1.7} />
-                    </a>
-                  ) : null}
-                  {settings.facebookUrl ? (
-                    <a
-                      href={settings.facebookUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      aria-label="Facebook"
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/12 text-[#ddcbbf] transition-colors hover:border-white/25 hover:text-white"
-                    >
-                      <Facebook size={16} strokeWidth={1.7} />
-                    </a>
-                  ) : null}
-                </div>
-              ) : null}
+              <div className="mt-6 flex gap-3">
+                {settings.instagramUrl ? (
+                  <a
+                    href={settings.instagramUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label="Instagram"
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/12 text-[#ddcbbf] transition-colors hover:border-white/25 hover:text-white"
+                  >
+                    <Instagram size={16} strokeWidth={1.7} />
+                  </a>
+                ) : null}
+                <a
+                  href={KAKAO_OPENCHAT_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="카카오톡 오픈채팅"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/12 text-[#ddcbbf] transition-colors hover:border-white/25 hover:text-white"
+                >
+                  <MessageCircle size={16} strokeWidth={1.7} />
+                </a>
+              </div>
 
               <p className="mt-6 text-[12px] text-[#a99282]">
                 &copy; {new Date().getFullYear()} {settings.shopName}. All rights reserved.

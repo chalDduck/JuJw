@@ -51,7 +51,7 @@ export function getSiteUrl(): string {
   return (
     readEnv('SITE_URL') ??
     readEnv('NEXT_PUBLIC_SITE_URL') ??
-    'https://jujw.pages.dev'
+    'https://jujw.fnvlzl95.workers.dev'
   )
 }
 

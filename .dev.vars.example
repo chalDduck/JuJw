@@ -10,3 +10,7 @@ ADMIN_PASSWORD=use-a-strong-password
 
 JWT_SECRET=replace-with-a-long-random-secret
 SITE_URL=http://localhost:8787
+
+# 검색엔진 소유권 인증 메타태그 값(선택)
+GOOGLE_SITE_VERIFICATION=
+NAVER_SITE_VERIFICATION=

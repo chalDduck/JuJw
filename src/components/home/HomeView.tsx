@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import {
   ArrowRight,
-  Facebook,
   Gem,
   Gift,
   Heart,
@@ -17,6 +16,7 @@ import {
 } from 'lucide-react'
 import ShowcaseImage from '@/components/media/ShowcaseImage'
 import { cn } from '@/lib/utils'
+import { KAKAO_OPENCHAT_URL } from '@/lib/site-links'
 import type { SiteSettings } from '@/lib/site-settings'
 
 const GENERIC_PRODUCT_PLACEHOLDER = '/img/hero/hero.png'
@@ -290,9 +290,10 @@ export default function HomeView({
               <span className="h-1.5 w-1.5 rounded-full bg-current/80" />
               <span className="h-px flex-1 bg-current/45" />
             </div>
-            <h1 className="hero-brand-mark mt-5 text-[4rem] italic leading-none tracking-[0.04em] text-white sm:text-[7.5rem]">
+            <h1 className="sr-only">종로 귀금속 도매 JU JEWELRY</h1>
+            <p aria-hidden="true" className="hero-brand-mark mt-5 text-[4rem] italic leading-none tracking-[0.04em] text-white sm:text-[7.5rem]">
               Ju
-            </h1>
+            </p>
             <p className="mt-5 max-w-[420px] text-[13px] leading-7 text-white/82 sm:text-[15px]">
               <span className="block sm:inline">{settings.homeHeroLine1}</span>
               <span className="block sm:inline sm:ml-1">{settings.homeHeroLine2}</span>
@@ -552,13 +553,13 @@ export default function HomeView({
                   <Instagram size={18} />
                 </a>
                 <a
-                  href={settings.facebookUrl || '#'}
-                  target={settings.facebookUrl ? '_blank' : undefined}
-                  rel={settings.facebookUrl ? 'noreferrer' : undefined}
-                  aria-label="Facebook"
+                  href={KAKAO_OPENCHAT_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="카카오톡 오픈채팅"
                   className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-white/80 transition-colors hover:border-white/35 hover:text-white"
                 >
-                  <Facebook size={18} />
+                  <MessageCircle size={18} />
                 </a>
               </div>
             </div>

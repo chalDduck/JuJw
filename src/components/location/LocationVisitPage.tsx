@@ -6,7 +6,7 @@ import {
   ArrowRight,
   CarFront,
   Clock3,
-  Facebook,
+  MessageCircle,
   Instagram,
   MapPinned,
   Menu,
@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 import ShowcaseImage from '@/components/media/ShowcaseImage'
 import { cn } from '@/lib/utils'
+import { KAKAO_OPENCHAT_URL } from '@/lib/site-links'
 import type { SiteSettings } from '@/lib/site-settings'
 
 type LocationVisitPageProps = {
@@ -97,7 +98,7 @@ export default function LocationVisitPage({ settings }: LocationVisitPageProps) 
 
   const socialLinks = [
     { href: settings.instagramUrl || '/contact', label: 'Instagram', Icon: Instagram },
-    { href: settings.facebookUrl || '/contact', label: 'Facebook', Icon: Facebook },
+    { href: KAKAO_OPENCHAT_URL, label: '카카오톡', Icon: MessageCircle },
   ]
 
   // 구글 지도: 주소에서 호수(예: ", 143호")를 떼고 건물 주소로 검색

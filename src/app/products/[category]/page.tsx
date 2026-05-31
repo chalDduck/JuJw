@@ -6,6 +6,7 @@ import ShowcaseImage from '@/components/media/ShowcaseImage'
 import JsonLd from '@/components/seo/JsonLd'
 import { getCategoryBySlug, getProducts } from '@/lib/db'
 import { getSiteUrl } from '@/lib/env'
+import { buildPageMetadata } from '@/lib/metadata'
 
 export const dynamic = 'force-dynamic'
 
@@ -31,13 +32,13 @@ export async function generateMetadata({
     }
   }
 
-  return {
+  return buildPageMetadata({
     title: `${category.name} 도매`,
     description: `${category.name} 카테고리 라인업과 스펙을 확인하고 상담을 요청해 보세요.`,
-    alternates: {
-      canonical: `/products/${category.slug}`,
-    },
-  }
+    path: `/products/${category.slug}`,
+    image: categoryFallbackImages[category.slug]?.[0] ?? '/og-image.png',
+    imageAlt: `${category.name} 도매 컬렉션`,
+  })
 }
 
 export default async function ProductCategoryPage({

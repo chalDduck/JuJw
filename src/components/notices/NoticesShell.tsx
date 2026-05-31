@@ -2,9 +2,10 @@
 
 import Link from 'next/link'
 import { ReactNode, useEffect, useState } from 'react'
-import { ArrowRight, Facebook, Instagram, Menu, X } from 'lucide-react'
+import { ArrowRight, Instagram, Menu, MessageCircle, X } from 'lucide-react'
 import ShowcaseImage from '@/components/media/ShowcaseImage'
 import { cn } from '@/lib/utils'
+import { KAKAO_OPENCHAT_URL } from '@/lib/site-links'
 import type { SiteSettings } from '@/lib/site-settings'
 
 const navigation = [
@@ -64,7 +65,7 @@ export default function NoticesShell({
 
   const socialLinks = [
     { href: settings.instagramUrl || '/contact', label: 'Instagram', Icon: Instagram },
-    { href: settings.facebookUrl || '/contact', label: 'Facebook', Icon: Facebook },
+    { href: KAKAO_OPENCHAT_URL, label: '카카오톡', Icon: MessageCircle },
   ]
 
   return (
