@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 import { MapPin, MessageCircle, Phone } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-const KAKAO_OPENCHAT = 'https://open.kakao.com/o/gywG5oxi'
+const KAKAO_OPENCHAT = 'https://open.kakao.com/o/sif9npxi'
 const DEFAULT_PHONE = '02-236-6268'
 
 export default function FloatingCTA() {
