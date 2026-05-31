@@ -63,7 +63,7 @@ export type SiteSettings = {
 
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   shopName: 'JU JEWELRY',
-  phonePrimary: '02-236-6268',
+  phonePrimary: '02-744-6268',
   phoneSecondary: '',
   email: 'contact@jujewelry.com',
   address: '서울 종로구 종로 173, 143호',
