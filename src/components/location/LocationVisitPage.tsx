@@ -170,9 +170,9 @@ export default function LocationVisitPage({ settings }: LocationVisitPageProps) 
 
       <section className="relative isolate min-h-[560px] overflow-hidden bg-[#5d483a] sm:min-h-[620px] md:min-h-[760px]">
         <ShowcaseImage
-          src="/img/location-generated/location-hero-desktop.png"
-          mobileSrc="/img/location-generated/location-hero-mobile.png"
-          alt="오시는 길 히어로 이미지"
+          src="/img/ju-store/ju-store-hero-desktop.jpg"
+          mobileSrc="/img/ju-store/ju-store-hero-mobile.jpg"
+          alt="JU JEWELRY 매장 전경"
           loading="eager"
           className="absolute inset-0 h-full w-full bg-[#5d483a]"
           imageClassName="object-cover object-center"
@@ -347,8 +347,8 @@ export default function LocationVisitPage({ settings }: LocationVisitPageProps) 
       <section className="px-4 pb-0 pt-4 sm:px-6 md:px-8 md:pt-8">
         <div className="mx-auto grid max-w-[1440px] overflow-hidden border border-[#decfbe] bg-[#f8f3ed] md:grid-cols-[0.92fr_1.08fr_0.84fr]">
           <ShowcaseImage
-            src="/img/location-generated/location-cta-panel.png"
-            alt="오시는 길 상담 이미지"
+            src="/img/ju-store/ju-store-counter-panel.jpg"
+            alt="JU JEWELRY 매장 쇼케이스"
             className="min-h-[220px]"
             imageClassName="object-cover object-center"
           />

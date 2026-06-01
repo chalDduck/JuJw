@@ -1,6 +1,6 @@
-import ProductsShowcasePage from '@/components/products/ProductsShowcasePage'
-import { getCategories, getProducts, getPublicSettings } from '@/lib/db'
-import { normalizeSiteSettings } from '@/lib/site-settings'
+import ProductCatalog from '@/components/products/ProductCatalog'
+import BreadcrumbJsonLd from '@/components/seo/BreadcrumbJsonLd'
+import { getCategories, getProducts } from '@/lib/db'
 import { buildPageMetadata } from '@/lib/metadata'
 
 export const dynamic = 'force-dynamic'
@@ -8,22 +8,22 @@ export const dynamic = 'force-dynamic'
 export const metadata = buildPageMetadata({
   title: '주얼리 도매 컬렉션',
   description:
-    '반지, 목걸이, 귀걸이, 팔찌 등 JU JEWELRY의 주얼리 도매 컬렉션과 추천 제품을 확인해 보세요.',
+    '반지, 목걸이, 귀걸이, 팔찌 등 JU JEWELRY의 주얼리 도매 컬렉션을 카테고리별로 한 화면에서 둘러보세요.',
   path: '/products',
+  image: '/img/products-generated/products-hero-desktop.png',
+  imageAlt: 'JU JEWELRY 주얼리 도매 컬렉션',
 })
 
 export default async function ProductsPage() {
-  const [categories, products, rawSettings] = await Promise.all([
+  const [categories, products] = await Promise.all([
     getCategories(),
     getProducts({ published: true }),
-    getPublicSettings(),
   ])
 
   return (
-    <ProductsShowcasePage
-      categories={categories}
-      products={products}
-      settings={normalizeSiteSettings(rawSettings)}
-    />
+    <>
+      <BreadcrumbJsonLd items={[{ name: '홈', path: '/' }, { name: '제품', path: '/products' }]} />
+      <ProductCatalog categories={categories} products={products} initialCategory="all" />
+    </>
   )
 }

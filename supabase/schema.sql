@@ -127,28 +127,9 @@ insert into categories (name, slug, icon, order_index) values
   ('반지',   'rings',     '💍', 1),
   ('목걸이', 'necklaces', '📿', 2),
   ('귀걸이', 'earrings',  '💎', 3),
-  ('팔찌',   'bracelets', '⌚', 4)
+  ('팔찌',   'bracelets', '⌚', 4),
+  ('액세서리', 'accessories', '✦', 5)
 on conflict (slug) do nothing;
-
-insert into products (category_id, name, slug, spec, description, is_featured, order_index) values
-  ((select id from categories where slug = 'rings'),     '에끌라 다이아 링',        'eclat-diamond-ring',         '14K Gold / Diamond',        '매일 착용하기 좋은 데일리 다이아 링입니다.',          true,  1),
-  ((select id from categories where slug = 'necklaces'), '루미에르 라인 목걸이',    'lumiere-line-necklace',      '14K Gold',                  '슬림한 라인으로 부담 없이 착용하는 목걸이입니다.',    true,  2),
-  ((select id from categories where slug = 'earrings'),  '헤일로 링 귀걸이',        'halo-ring-earring',          '18K Gold / Diamond',        '얼굴선을 은은하게 밝혀주는 귀걸이입니다.',            true,  3),
-  ((select id from categories where slug = 'bracelets'), '클래식 골드 체인 팔찌',   'classic-gold-chain-bracelet','14K Gold',                  '단독 또는 레이어드로 착용하기 좋은 팔찌입니다.',      false, 4)
-on conflict (slug) do nothing;
-
-insert into product_images (product_id, url, alt_text, is_primary, order_index)
-select p.id, v.url, p.name, true, 1
-from (values
-  ('eclat-diamond-ring',          '/img/products-generated/home-best-ring-portrait.png'),
-  ('lumiere-line-necklace',       '/img/products-generated/home-best-necklace-portrait.png'),
-  ('halo-ring-earring',           '/img/products-generated/home-best-earrings-portrait.png'),
-  ('classic-gold-chain-bracelet', '/img/products-generated/home-best-bracelet-portrait.png')
-) as v(slug, url)
-join products p on p.slug = v.slug
-where not exists (
-  select 1 from product_images pi where pi.product_id = p.id
-);
 
 insert into notices (title, content, is_published, is_pinned)
 select

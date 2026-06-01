@@ -41,13 +41,22 @@ export default function Header() {
     return null
   }
 
+  // 컬렉션 카탈로그(/products, /products/[category])는 어두운 이미지 히어로 위에 헤더가 떠 있어
+  // 워드마크/메뉴를 흰색으로 표시합니다. 밝은 레이아웃인 제품 상세(/products/.../...)는 제외합니다.
+  const segments = pathname.split('/').filter(Boolean)
+  const onCollectionHero = segments[0] === 'products' && segments.length <= 2
+  const chromeColorClass = onCollectionHero ? 'text-white' : 'text-[#2f2119]'
+
   return (
     <>
       <header data-site-header className="fixed inset-x-0 top-0 z-[70]">
         <div className="mx-auto flex max-w-[1440px] items-center justify-between px-6 pt-6 sm:px-10 sm:pt-8">
           <Link
             href="/"
-            className="brand-wordmark text-[2rem] leading-none tracking-[0.08em] text-[#2f2119] transition-opacity hover:opacity-72"
+            className={cn(
+              'brand-wordmark text-[2rem] leading-none tracking-[0.08em] transition-opacity hover:opacity-72',
+              chromeColorClass
+            )}
           >
             Ju
           </Link>
@@ -57,7 +66,10 @@ export default function Header() {
             aria-label={menuOpen ? '메뉴 닫기' : '메뉴 열기'}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((open) => !open)}
-            className="inline-flex h-10 w-10 items-center justify-center text-[#2f2119] transition-opacity hover:opacity-72"
+            className={cn(
+              'inline-flex h-10 w-10 items-center justify-center transition-opacity hover:opacity-72',
+              chromeColorClass
+            )}
           >
             {menuOpen ? <X size={22} strokeWidth={1.7} /> : <Menu size={22} strokeWidth={1.7} />}
           </button>

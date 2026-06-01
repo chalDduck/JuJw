@@ -9,6 +9,7 @@ const interestOptions = [
   { value: 'necklaces', label: '목걸이' },
   { value: 'earrings', label: '귀걸이' },
   { value: 'bracelets', label: '팔찌' },
+  { value: 'accessories', label: '액세서리' },
   { value: 'custom', label: '맞춤 제작' },
   { value: 'catalog', label: '카탈로그 요청' },
   { value: 'other', label: '기타' },

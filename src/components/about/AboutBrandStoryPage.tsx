@@ -269,8 +269,8 @@ export default function AboutBrandStoryPage({ settings }: AboutBrandStoryPagePro
           </div>
 
           <ShowcaseImage
-            src="/img/about-generated/about-intro-ring.png"
-            alt="브랜드 스토리 인트로 링 이미지"
+            src="/img/ju-store/ju-store-counter-panel.jpg"
+            alt="JU JEWELRY 매장 쇼케이스"
             className="overflow-hidden rounded-[2px] border border-[#e3d6c8] bg-[#efe7dc] min-h-[300px] md:min-h-[380px]"
             imageClassName="object-cover object-center"
           />

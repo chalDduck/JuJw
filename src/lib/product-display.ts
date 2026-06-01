@@ -3,17 +3,15 @@ import type { Product } from '@/lib/models'
 export const GENERIC_PRODUCT_PLACEHOLDER = '/img/hero/hero.png'
 
 export const productFallbacks: Record<string, string[]> = {
-  rings: ['/img/products-generated/products-card-ring.png', '/img/products-generated/products-card-ring.png'],
-  necklaces: ['/img/products-generated/products-card-necklace.png', '/img/products-generated/products-card-necklace.png'],
-  earrings: ['/img/products-generated/products-card-earrings.png', '/img/products-generated/products-card-earrings.png'],
-  bracelets: ['/img/products-generated/products-card-bracelet.png', '/img/products-generated/products-card-bracelet.png'],
+  rings: [GENERIC_PRODUCT_PLACEHOLDER],
+  necklaces: [GENERIC_PRODUCT_PLACEHOLDER],
+  earrings: [GENERIC_PRODUCT_PLACEHOLDER],
+  bracelets: [GENERIC_PRODUCT_PLACEHOLDER],
+  accessories: [GENERIC_PRODUCT_PLACEHOLDER],
 }
 
 export const defaultProductFallbacks = [
-  '/img/products-generated/products-card-necklace.png',
-  '/img/products-generated/products-card-earrings.png',
-  '/img/products-generated/products-card-ring.png',
-  '/img/products-generated/products-card-bracelet.png',
+  GENERIC_PRODUCT_PLACEHOLDER,
 ]
 
 export function resolveProductHref(product: Product) {

@@ -1,24 +1,32 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import BreadcrumbJsonLd from '@/components/seo/BreadcrumbJsonLd'
 import { buildPageMetadata } from '@/lib/metadata'
 
 export const metadata: Metadata = buildPageMetadata({
   title: '종로 귀금속 도매',
   description: '종로 귀금속 상권에서 신뢰할 수 있는 주얼리 도매 파트너 JU JEWELRY',
   path: '/jongno-jewelry',
+  image: '/img/location-generated/location-hero-desktop.png',
+  imageAlt: '종로 귀금속 도매 JU JEWELRY',
 })
 
 export default function JongnoJewelryPage() {
   return (
-    <LandingLayout
-      title="종로 귀금속 도매"
-      description="종로 상권 기반의 빠른 상담/출고 프로세스로 안정적인 거래를 지원합니다."
-      points={[
-        '종로 귀금속 상권 네트워크 기반 소싱',
-        '반지/목걸이/귀걸이/팔찌 카테고리 운영',
-        '소량 주문부터 맞춤 제작까지 유연 대응',
-      ]}
-    />
+    <>
+      <BreadcrumbJsonLd
+        items={[{ name: '홈', path: '/' }, { name: '종로 귀금속 도매', path: '/jongno-jewelry' }]}
+      />
+      <LandingLayout
+        title="종로 귀금속 도매"
+        description="종로 상권 기반의 빠른 상담/출고 프로세스로 안정적인 거래를 지원합니다."
+        points={[
+          '종로 귀금속 상권 네트워크 기반 소싱',
+          '반지/목걸이/귀걸이/팔찌 카테고리 운영',
+          '소량 주문부터 맞춤 제작까지 유연 대응',
+        ]}
+      />
+    </>
   )
 }
 

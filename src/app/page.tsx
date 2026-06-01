@@ -18,19 +18,25 @@ export const metadata = buildPageMetadata({
   path: '/',
 })
 
+function isCuratedProductImage(imageUrl: string | null): boolean {
+  return Boolean(imageUrl && imageUrl.includes('products/ju-curated/'))
+}
+
 export default async function Home() {
-  const [settingsMap, featured] = await Promise.all([
+  const [settingsMap, products] = await Promise.all([
     getPublicSettings(),
-    getProducts({ featured: true, published: true, limit: 6 }),
+    getProducts({ published: true }),
   ])
 
-  let products = featured
-  if (products.length === 0) {
-    products = await getProducts({ published: true, limit: 6 })
-  }
+  const curatedProducts = products.filter((product) => isCuratedProductImage(product.imageUrl))
+  const featuredCuratedProducts = curatedProducts.filter((product) => product.isFeatured)
+  const homeProducts = [
+    ...featuredCuratedProducts,
+    ...curatedProducts.filter((product) => !product.isFeatured),
+  ]
 
   const settings = normalizeSiteSettings(settingsMap)
-  const featuredProducts: HomeProduct[] = products.map((product) => ({
+  const featuredProducts: HomeProduct[] = homeProducts.map((product) => ({
     id: product.id,
     categoryName: product.categoryName,
     categorySlug: product.categorySlug,

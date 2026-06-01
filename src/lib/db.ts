@@ -110,6 +110,7 @@ const DEFAULT_CATEGORIES: Category[] = [
   { id: 2, name: '목걸이', slug: 'necklaces', orderIndex: 2 },
   { id: 3, name: '귀걸이', slug: 'earrings', orderIndex: 3 },
   { id: 4, name: '팔찌', slug: 'bracelets', orderIndex: 4 },
+  { id: 5, name: '액세서리', slug: 'accessories', orderIndex: 5 },
 ]
 
 /* -------------------------------------------------------------------------- */

@@ -28,14 +28,6 @@ const HOME_SIGNATURE_IMAGE = '/img/products-generated/home-signature-desktop.png
 const HOME_SIGNATURE_MOBILE_IMAGE = '/img/products-generated/home-signature-mobile.png'
 
 const HOME_IMAGES = {
-  collectionBracelet: '/img/products-generated/home-collection-bracelet-card.png',
-  collectionEarrings: '/img/products-generated/home-collection-earrings-card.png',
-  collectionNecklace: '/img/products-generated/home-collection-necklace-card.png',
-  collectionRing: '/img/products-generated/home-collection-ring-card.png',
-  bestBracelet: '/img/products-generated/home-best-bracelet-portrait.png',
-  bestEarrings: '/img/products-generated/home-best-earrings-portrait.png',
-  bestNecklace: '/img/products-generated/home-best-necklace-portrait.png',
-  bestRing: '/img/products-generated/home-best-ring-portrait.png',
   giftConsultation: '/img/products-generated/home-gift-consultation-portrait.png',
 } as const
 
@@ -68,20 +60,7 @@ type ProductCard = {
 }
 
 const categoryImageMap: Record<string, string> = {
-  bracelets: HOME_IMAGES.bestBracelet,
-  earrings: HOME_IMAGES.bestEarrings,
-  necklaces: HOME_IMAGES.bestNecklace,
-  rings: HOME_IMAGES.bestRing,
 }
-
-const fallbackProducts: ProductCard[] = [
-  { key: 'fallback-1', name: '에끌라 다이아 링', detail: '14K 골드, 다이아몬드 세팅', price: '가격 문의', image: HOME_IMAGES.bestRing, href: '/products/rings' },
-  { key: 'fallback-2', name: '루미에르 라인 목걸이', detail: '매일 착용하기 좋은 슬림 라인', price: '가격 문의', image: HOME_IMAGES.bestNecklace, href: '/products/necklaces' },
-  { key: 'fallback-3', name: '클래식 골드 체인 팔찌', detail: '단독 또는 레이어드 착용 추천', price: '가격 문의', image: HOME_IMAGES.bestBracelet, href: '/products/bracelets' },
-  { key: 'fallback-4', name: '헤일로 링 귀걸이', detail: '얼굴선을 은은하게 밝혀주는 디자인', price: '가격 문의', image: HOME_IMAGES.bestEarrings, href: '/products/earrings' },
-  { key: 'fallback-5', name: '스텔라 다이아 목걸이', detail: '작은 포인트가 오래 남는 목걸이', price: '가격 문의', image: HOME_IMAGES.bestNecklace, href: '/products/necklaces' },
-  { key: 'fallback-6', name: '볼륨 플라워 링', detail: '손끝에 부드러운 입체감을 더하는 링', price: '가격 문의', image: HOME_IMAGES.bestRing, href: '/products/rings' },
-] as const
 
 const footerGroups = [
   {
@@ -133,7 +112,42 @@ const resolveProductImage = (product: HomeProduct, index: number) => {
     return categoryImageMap[product.categorySlug]
   }
 
-  return fallbackProducts[index % fallbackProducts.length].image
+  return GENERIC_PRODUCT_PLACEHOLDER
+}
+
+function getCollectionMeta(settings: SiteSettings, categorySlug?: string, categoryName?: string) {
+  if (categorySlug === 'necklaces') {
+    return {
+      title: settings.homeCollectionNecklacesTitle,
+      subtitle: settings.homeCollectionNecklacesSubtitle,
+    }
+  }
+
+  if (categorySlug === 'rings') {
+    return {
+      title: settings.homeCollectionRingsTitle,
+      subtitle: settings.homeCollectionRingsSubtitle,
+    }
+  }
+
+  if (categorySlug === 'earrings') {
+    return {
+      title: settings.homeCollectionEarringsTitle,
+      subtitle: settings.homeCollectionEarringsSubtitle,
+    }
+  }
+
+  if (categorySlug === 'bracelets') {
+    return {
+      title: settings.homeCollectionBraceletsTitle,
+      subtitle: settings.homeCollectionBraceletsSubtitle,
+    }
+  }
+
+  return {
+    title: categoryName || 'COLLECTION',
+    subtitle: categoryName || '컬렉션',
+  }
 }
 
 export default function HomeView({
@@ -161,7 +175,7 @@ export default function HomeView({
   }, [menuOpen])
 
   const bestSellerCards = useMemo(() => {
-    const dynamicCards = featuredProducts.slice(0, 6).map((product, index) => ({
+    return featuredProducts.slice(0, 6).map((product, index) => ({
       key: `dynamic-${product.id}`,
       name: product.name,
       detail: product.spec || `${product.categoryName || 'Ju 컬렉션'} 추천 제품`,
@@ -169,14 +183,28 @@ export default function HomeView({
       image: resolveProductImage(product, index),
       href: getProductHref(product),
     }))
-
-    const merged = [...dynamicCards]
-    for (const item of fallbackProducts) {
-      if (merged.length >= 6) break
-      merged.push(item)
-    }
-    return merged.slice(0, 6)
   }, [featuredProducts])
+
+  const collections = useMemo(() => {
+    const cards = new Map<string, {
+      title: string
+      subtitle: string
+      image: string
+      href: string
+    }>()
+
+    featuredProducts.forEach((product, index) => {
+      if (!product.categorySlug || cards.has(product.categorySlug)) return
+      const meta = getCollectionMeta(settings, product.categorySlug, product.categoryName)
+      cards.set(product.categorySlug, {
+        ...meta,
+        image: resolveProductImage(product, index),
+        href: `/products/${product.categorySlug}`,
+      })
+    })
+
+    return Array.from(cards.values())
+  }, [featuredProducts, settings])
 
   const contactLines = [settings.phonePrimary, settings.phoneSecondary, settings.email].filter(Boolean)
   const benefits = [
@@ -184,12 +212,6 @@ export default function HomeView({
     { title: settings.homeBenefit2Title, description: settings.homeBenefit2Description, Icon: Gift },
     { title: settings.homeBenefit3Title, description: settings.homeBenefit3Description, Icon: Leaf },
     { title: settings.homeBenefit4Title, description: settings.homeBenefit4Description, Icon: MessageCircle },
-  ]
-  const collections = [
-    { title: settings.homeCollectionNecklacesTitle, subtitle: settings.homeCollectionNecklacesSubtitle, image: HOME_IMAGES.collectionNecklace, href: '/products/necklaces' },
-    { title: settings.homeCollectionEarringsTitle, subtitle: settings.homeCollectionEarringsSubtitle, image: HOME_IMAGES.collectionEarrings, href: '/products/earrings' },
-    { title: settings.homeCollectionRingsTitle, subtitle: settings.homeCollectionRingsSubtitle, image: HOME_IMAGES.collectionRing, href: '/products/rings' },
-    { title: settings.homeCollectionBraceletsTitle, subtitle: settings.homeCollectionBraceletsSubtitle, image: HOME_IMAGES.collectionBracelet, href: '/products/bracelets' },
   ]
   const consultationItems = [
     { title: settings.homeConsultFeature1Title, description: settings.homeConsultFeature1Description, Icon: Gift },
@@ -382,27 +404,33 @@ export default function HomeView({
             <div className="mx-auto mt-4 h-px w-10 bg-[#caa57b]" />
           </div>
 
-          <div className="mt-8 grid gap-4 sm:mt-10 md:grid-cols-2 xl:grid-cols-4">
-            {collections.map((item) => (
-              <Link key={item.title} href={item.href} className="group block bg-white">
-                <ShowcaseImage
-                  src={item.image}
-                  alt={item.title}
-                  className="aspect-[1.1/0.96]"
-                  imageClassName="object-cover object-center transition-transform duration-500 group-hover:scale-[1.03]"
-                />
-                <div className="flex items-end justify-between gap-5 border border-t-0 border-[#e3d7ca] px-5 py-5">
-                  <div>
-                    <h3 className="font-display text-[1.5rem] leading-none tracking-[0.06em] text-[#3d2d23]">{item.title}</h3>
-                    <p className="mt-2 text-[13px] text-[#7b6b5f]">{item.subtitle}</p>
+          {collections.length > 0 ? (
+            <div className="mt-8 grid gap-4 sm:mt-10 md:grid-cols-2 xl:grid-cols-4">
+              {collections.map((item) => (
+                <Link key={item.title} href={item.href} className="group block bg-white">
+                  <ShowcaseImage
+                    src={item.image}
+                    alt={item.title}
+                    className="aspect-[1.1/0.96]"
+                    imageClassName="object-cover object-center transition-transform duration-500 group-hover:scale-[1.03]"
+                  />
+                  <div className="flex items-end justify-between gap-5 border border-t-0 border-[#e3d7ca] px-5 py-5">
+                    <div>
+                      <h3 className="font-display text-[1.5rem] leading-none tracking-[0.06em] text-[#3d2d23]">{item.title}</h3>
+                      <p className="mt-2 text-[13px] text-[#7b6b5f]">{item.subtitle}</p>
+                    </div>
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full border border-[#b79776] text-[#8c6a4a]">
+                      <Plus size={15} strokeWidth={1.7} />
+                    </span>
                   </div>
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full border border-[#b79776] text-[#8c6a4a]">
-                    <Plus size={15} strokeWidth={1.7} />
-                  </span>
-                </div>
-              </Link>
-            ))}
-          </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="mt-10 border-y border-[#e3d7ca] px-4 py-12 text-center text-[15px] text-[#7b6b5f]">
+              등록된 실제 제품을 준비 중입니다.
+            </div>
+          )}
         </div>
       </section>
 
@@ -414,28 +442,34 @@ export default function HomeView({
             <div className="mx-auto mt-4 h-px w-10 bg-[#caa57b]" />
           </div>
 
-          <div className="mt-8 grid grid-cols-2 gap-3 sm:mt-10 sm:gap-4 md:grid-cols-3 xl:grid-cols-6">
-            {bestSellerCards.map((item) => (
-              <Link key={item.key} href={item.href} className="group block bg-white">
-                <div className="relative overflow-hidden">
-                  <span className="absolute right-3 top-3 z-10 text-white/85">
-                    <Heart size={18} strokeWidth={1.5} />
-                  </span>
-                  <ShowcaseImage
-                    src={item.image}
-                    alt={item.name}
-                    className="aspect-[0.95/1]"
-                    imageClassName="object-cover object-center transition-transform duration-500 group-hover:scale-[1.03]"
-                  />
-                </div>
-                <div className="border border-t-0 border-[#e3d7ca] px-3 py-3 text-center sm:px-4 sm:py-4">
-                  <h3 className="min-h-[40px] text-[13px] leading-6 text-[#3a2b22] sm:text-[14px]">{item.name}</h3>
-                  <p className="mt-2 text-[12px] leading-5 text-[#8b7a6b]">{item.detail}</p>
-                  <p className="mt-1 text-[14px] text-[#6a4d3d]">{item.price}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
+          {bestSellerCards.length > 0 ? (
+            <div className="mt-8 grid grid-cols-2 gap-3 sm:mt-10 sm:gap-4 md:grid-cols-3 xl:grid-cols-6">
+              {bestSellerCards.map((item) => (
+                <Link key={item.key} href={item.href} className="group block bg-white">
+                  <div className="relative overflow-hidden">
+                    <span className="absolute right-3 top-3 z-10 text-white/85">
+                      <Heart size={18} strokeWidth={1.5} />
+                    </span>
+                    <ShowcaseImage
+                      src={item.image}
+                      alt={item.name}
+                      className="aspect-[0.95/1]"
+                      imageClassName="object-cover object-center transition-transform duration-500 group-hover:scale-[1.03]"
+                    />
+                  </div>
+                  <div className="border border-t-0 border-[#e3d7ca] px-3 py-3 text-center sm:px-4 sm:py-4">
+                    <h3 className="min-h-[40px] text-[13px] leading-6 text-[#3a2b22] sm:text-[14px]">{item.name}</h3>
+                    <p className="mt-2 text-[12px] leading-5 text-[#8b7a6b]">{item.detail}</p>
+                    <p className="mt-1 text-[14px] text-[#6a4d3d]">{item.price}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="mt-10 border-y border-[#e3d7ca] px-4 py-12 text-center text-[15px] text-[#7b6b5f]">
+              추천할 실제 제품을 준비 중입니다.
+            </div>
+          )}
 
           <div className="mt-8 flex justify-center">
             <Link

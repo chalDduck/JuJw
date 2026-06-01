@@ -66,28 +66,6 @@ body.home-reference-page [data-site-footer] {
   display: none;
 }
 
-body.products-reference-page {
-  background: #f3eee7;
-}
-
-body.products-reference-page [data-site-header],
-body.products-reference-page [data-site-header-overlay],
-body.products-reference-page [data-site-footer] {
-  display: none;
-}
-
-body.products-reference-page [data-products-shell] {
-  font-family: var(--font-body) !important;
-}
-
-body.products-reference-page [data-products-shell] [data-products-serif] {
-  font-family: var(--font-body) !important;
-}
-
-body.products-reference-page [data-products-shell] [data-products-display] {
-  font-family: var(--font-body) !important;
-}
-
 body.about-reference-page [data-site-header],
 body.about-reference-page [data-site-header-overlay],
 body.about-reference-page [data-site-footer] {
