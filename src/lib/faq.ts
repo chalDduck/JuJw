@@ -13,7 +13,7 @@ export type FaqItem = {
 
 export const DEFAULT_FAQ_CATEGORIES: FaqCategory[] = [
   { id: 'all', name: '전체', description: '주문부터 A/S까지 전체 질문을 빠르게 확인할 수 있습니다.' },
-  { id: 'order', name: '주문/결제', description: '거래 방식과 결제 조건, 세금계산서 발행 안내입니다.' },
+  { id: 'order', name: '주문/결제', description: '거래 방식과 결제 조건 안내입니다.' },
   { id: 'product', name: '제품', description: '품질 보증과 맞춤 제작, 카탈로그 관련 내용입니다.' },
   { id: 'delivery', name: '배송', description: '출고 일정과 수령 방식, 배송 기준을 확인할 수 있습니다.' },
   { id: 'as', name: 'A/S', description: '교환과 반품, 사후 점검 절차를 정리했습니다.' },
@@ -30,8 +30,9 @@ export const DEFAULT_FAQS: FaqItem[] = [
   {
     id: 2,
     category: 'order',
-    question: '세금계산서 발행이 가능한가요?',
-    answer: '네, 사업자 거래 시 세금계산서를 발행해 드립니다. 주문 시 사업자등록증 사본을 보내주시면 됩니다.',
+    question: '견적은 어떻게 받을 수 있나요?',
+    answer:
+      '품목, 수량, 납기, 예산 범위를 남겨 주시면 상담 후 조건에 맞춰 견적을 안내합니다. 필요한 경우 제품군을 먼저 정리해 드립니다.',
   },
   {
     id: 3,
@@ -79,7 +80,7 @@ export const DEFAULT_FAQS: FaqItem[] = [
     category: 'as',
     question: '교환/반품이 가능한가요?',
     answer:
-      '제품 수령 후 7일 이내 동일 조건으로 교환이 가능합니다. 단, 맞춤 제작 제품은 교환/반품이 제한될 수 있습니다. 자세한 내용은 거래 안내 페이지를 참고해 주세요.',
+      '수령 직후 제품 상태를 확인해 주세요. 이상 여부와 주문 방식에 따라 교환 가능 범위를 안내하며, 맞춤 제작 제품은 별도 확인이 필요합니다.',
   },
   {
     id: 10,

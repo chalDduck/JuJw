@@ -1,6 +1,6 @@
 export const trustBadges = [
   '사업자 거래 전문',
-  '세금계산서 발행',
+  '소량 주문 상담',
   '당일/익일 출고',
   'GIA 인증 다이아',
 ]
@@ -53,8 +53,8 @@ export const tradeTerms = [
   {
     icon: 'credit-card',
     title: '결제 방법',
-    description: '세금계산서 발행, 현금/카드/계좌이체',
-    details: '사업자 거래 기준으로 세금계산서 발행이 가능하며, 주문 규모에 따라 결제 조건을 협의합니다.',
+    description: '현금/카드/계좌이체 상담 가능',
+    details: '결제 방식과 조건은 주문 품목, 수량, 진행 방식에 맞춰 상담 시 안내합니다.',
   },
   {
     icon: 'truck',
@@ -65,8 +65,8 @@ export const tradeTerms = [
   {
     icon: 'refresh-cw',
     title: '교환/반품',
-    description: '7일 이내 동일 조건 교환',
-    details: '기본 거래 기준은 수령 후 7일 이내 동일 조건 교환이며, 주문 제작 품목은 별도 협의가 필요합니다.',
+    description: '제품 상태 확인 후 상담 안내',
+    details: '수령 직후 제품 상태를 확인해 주시면, 이상 여부와 주문 방식에 따라 교환 가능 범위를 안내합니다.',
   },
   {
     icon: 'wrench',
@@ -108,8 +108,8 @@ export const faqs = [
   {
     id: 2,
     category: 'order',
-    question: '세금계산서 발행이 가능한가요?',
-    answer: '사업자 거래 기준으로 세금계산서 발행이 가능합니다.',
+    question: '견적은 어떻게 받을 수 있나요?',
+    answer: '품목, 수량, 납기, 예산 범위를 남겨 주시면 상담 후 조건에 맞춰 견적을 안내합니다.',
   },
   {
     id: 3,
@@ -151,7 +151,7 @@ export const faqs = [
     id: 9,
     category: 'as',
     question: '교환/반품이 가능한가요?',
-    answer: '기본 거래 조건은 수령 후 7일 이내 동일 조건 교환이며, 주문 제작 제품은 별도 협의가 필요합니다.',
+    answer: '수령 직후 제품 상태를 확인해 주시면, 이상 여부와 주문 방식에 따라 교환 가능 범위를 안내합니다.',
   },
   {
     id: 10,
