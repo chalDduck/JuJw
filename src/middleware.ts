@@ -5,19 +5,40 @@ import { ADMIN_AUTH_COOKIE, getAdminTokenFromRequest, verifyAdminToken } from '@
 const PRIMARY_HOST = 'jujewelry.com'
 const WWW_HOST = 'www.jujewelry.com'
 const ADMIN_HOST = 'admin.jujewelry.com'
+const CUSTOM_HOSTS = new Set([PRIMARY_HOST, WWW_HOST, ADMIN_HOST])
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
   const hostname = request.headers.get('host')?.split(':')[0]?.toLowerCase()
+  const isHttpRequest =
+    request.nextUrl.protocol === 'http:' || request.headers.get('x-forwarded-proto') === 'http'
+
+  if (hostname && CUSTOM_HOSTS.has(hostname) && isHttpRequest) {
+    const url = request.nextUrl.clone()
+    url.protocol = 'https:'
+
+    if (hostname === WWW_HOST) {
+      url.hostname = PRIMARY_HOST
+    }
+
+    if (hostname === ADMIN_HOST && !pathname.startsWith('/admin')) {
+      url.pathname = '/admin'
+      url.search = ''
+    }
+
+    return NextResponse.redirect(url, 308)
+  }
 
   if (hostname === WWW_HOST) {
     const url = request.nextUrl.clone()
     url.hostname = PRIMARY_HOST
+    url.protocol = 'https:'
     return NextResponse.redirect(url, 308)
   }
 
   if (hostname === ADMIN_HOST && !pathname.startsWith('/admin')) {
     const url = request.nextUrl.clone()
+    url.protocol = 'https:'
     url.pathname = '/admin'
     url.search = ''
     return NextResponse.redirect(url, 308)
