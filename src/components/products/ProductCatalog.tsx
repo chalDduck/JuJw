@@ -118,7 +118,7 @@ export default function ProductCatalog({
         </div>
       </section>
 
-      <section className="sticky top-[var(--site-header-height)] z-30 border-y border-[#dfd0bf] bg-[#f7f2eb]/95 px-4 backdrop-blur sm:px-6 md:px-8">
+      <section className="border-y border-[#dfd0bf] bg-[#f7f2eb] px-4 sm:px-6 md:px-8">
         <div className="mx-auto flex max-w-7xl gap-2 overflow-x-auto py-3 scrollbar-hide">
           <button
             type="button"

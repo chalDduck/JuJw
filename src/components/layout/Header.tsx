@@ -49,7 +49,14 @@ export default function Header() {
 
   return (
     <>
-      <header data-site-header className="fixed inset-x-0 top-0 z-[70]">
+      <header
+        data-site-header
+        className={cn(
+          'inset-x-0 top-0 z-[70]',
+          // 컬렉션 카탈로그에선 로고가 스크롤을 따라오지 않고 히어로와 함께 사라지도록 absolute로 둡니다.
+          onCollectionHero ? 'absolute' : 'fixed'
+        )}
+      >
         <div className="mx-auto flex max-w-[1440px] items-center justify-between px-6 pt-6 sm:px-10 sm:pt-8">
           <Link
             href="/"
