@@ -14,9 +14,9 @@ export type FaqItem = {
 export const DEFAULT_FAQ_CATEGORIES: FaqCategory[] = [
   { id: 'all', name: '전체', description: '주문부터 A/S까지 전체 질문을 빠르게 확인할 수 있습니다.' },
   { id: 'order', name: '주문/결제', description: '거래 방식과 결제 조건 안내입니다.' },
-  { id: 'product', name: '제품', description: '품질 보증과 맞춤 제작, 카탈로그 관련 내용입니다.' },
+  { id: 'product', name: '제품', description: '품질 보증과 맞춤 제작 관련 내용입니다.' },
   { id: 'delivery', name: '배송', description: '출고 일정과 수령 방식, 배송 기준을 확인할 수 있습니다.' },
-  { id: 'as', name: 'A/S', description: '교환과 반품, 사후 점검 절차를 정리했습니다.' },
+  { id: 'as', name: 'A/S', description: '교환과 반품, A/S 접수 절차를 정리했습니다.' },
 ]
 
 export const DEFAULT_FAQS: FaqItem[] = [
@@ -56,13 +56,6 @@ export const DEFAULT_FAQS: FaqItem[] = [
       '네, 고객의 요청에 따른 맞춤 제작이 가능합니다. 원하시는 디자인, 소재, 사이즈 등을 말씀해 주시면 상담 후 제작 진행해 드립니다. 제작 기간은 디자인에 따라 7-14일 정도 소요됩니다.',
   },
   {
-    id: 6,
-    category: 'product',
-    question: '카탈로그를 받아볼 수 있나요?',
-    answer:
-      '네, 상담 요청 시 카탈로그 요청을 선택해 주시면 이메일 또는 우편으로 보내드립니다. 더 다양한 제품을 확인하실 수 있습니다.',
-  },
-  {
     id: 7,
     category: 'delivery',
     question: '배송은 얼마나 걸리나요?',
@@ -87,7 +80,7 @@ export const DEFAULT_FAQS: FaqItem[] = [
     category: 'as',
     question: 'A/S는 어떻게 받나요?',
     answer:
-      '구매하신 제품의 무상 점검 서비스를 제공합니다. 수리가 필요한 경우 합리적인 비용으로 진행해 드립니다. 매장 방문 또는 택배로 A/S 접수가 가능합니다.',
+      '구매 이력 확인 후 제품 상태와 수리 가능 범위를 안내합니다. 수리가 필요한 경우 비용을 확인한 뒤 진행하며, 매장 방문 또는 택배로 A/S 접수가 가능합니다.',
   },
 ]
 

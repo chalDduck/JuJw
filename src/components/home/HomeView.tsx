@@ -115,6 +115,14 @@ const resolveProductImage = (product: HomeProduct, index: number) => {
   return GENERIC_PRODUCT_PLACEHOLDER
 }
 
+function formatCollectionTitle(categorySlug?: string, categoryName?: string) {
+  if (categorySlug) {
+    return categorySlug.replace(/-/g, ' ').toUpperCase()
+  }
+
+  return categoryName || 'COLLECTION'
+}
+
 function getCollectionMeta(settings: SiteSettings, categorySlug?: string, categoryName?: string) {
   if (categorySlug === 'necklaces') {
     return {
@@ -145,7 +153,7 @@ function getCollectionMeta(settings: SiteSettings, categorySlug?: string, catego
   }
 
   return {
-    title: categoryName || 'COLLECTION',
+    title: formatCollectionTitle(categorySlug, categoryName),
     subtitle: categoryName || '컬렉션',
   }
 }

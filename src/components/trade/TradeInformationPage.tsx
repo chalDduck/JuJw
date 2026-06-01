@@ -47,7 +47,7 @@ const guideHighlights = [
   { title: '결제 방식 안내', description: '주문 규모와 진행 방식에 맞춰 결제 흐름을 안내합니다.' },
   { title: '재고품 빠른 출고', description: '재고 보유 제품은 당일 또는 익일 출고 기준으로 안내합니다.' },
   { title: '제품 상태 확인', description: '수령 후 상태 확인을 기준으로 교환 가능 범위를 안내합니다.' },
-  { title: '구매 후 점검 지원', description: '구매 이력 확인 후 수리 가능 범위와 비용을 차분하게 설명합니다.' },
+  { title: 'A/S 접수 안내', description: '구매 이력 확인 후 수리 가능 범위와 비용을 차분하게 설명합니다.' },
 ] as const
 
 const summaryGroups = [
@@ -61,7 +61,7 @@ const summaryGroups = [
   },
   {
     title: '교환과 A/S',
-    items: ['수령 후 제품 상태 확인', '주문 제작 품목은 별도 협의', '구매 이력 확인 후 점검 및 수리 안내'],
+    items: ['수령 후 제품 상태 확인', '주문 제작 품목은 별도 협의', '구매 이력 확인 후 수리 접수 안내'],
   },
 ] as const
 

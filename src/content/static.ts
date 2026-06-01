@@ -71,7 +71,7 @@ export const tradeTerms = [
   {
     icon: 'wrench',
     title: 'A/S',
-    description: '구매 제품 점검 및 수리 협의',
+    description: '수리 접수 및 비용 안내',
     details: '구매 이력 확인 후 수리 가능 여부와 비용을 안내해 드립니다.',
   },
   {
@@ -128,12 +128,6 @@ export const faqs = [
     category: 'product',
     question: '맞춤 제작이 가능한가요?',
     answer: '네. 디자인, 소재, 수량, 납기를 상담한 뒤 주문 제작으로 진행할 수 있습니다.',
-  },
-  {
-    id: 6,
-    category: 'product',
-    question: '카탈로그 요청이 가능한가요?',
-    answer: '문의 접수 시 관심 품목을 남겨 주시면 제품군 기준으로 안내해 드립니다.',
   },
   {
     id: 7,
