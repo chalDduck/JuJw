@@ -11,8 +11,14 @@
   "observability": {
     "enabled": true
   },
+  "workers_dev": true,
+  "routes": [
+    { "pattern": "jujewelry.com", "custom_domain": true },
+    { "pattern": "www.jujewelry.com", "custom_domain": true },
+    { "pattern": "admin.jujewelry.com", "custom_domain": true }
+  ],
   "vars": {
-    "SITE_URL": "https://jujw.fnvlzl95.workers.dev"
+    "SITE_URL": "https://jujewelry.com"
   }
   // 데이터/이미지는 Supabase(HTTP)로 처리하므로 D1/R2 바인딩은 필요 없습니다.
   // 비밀값은 코드/저장소에 두지 말고 `wrangler secret put <NAME>` 으로 등록하세요:

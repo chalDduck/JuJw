@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server'
 import { clearAuthCookie } from '@/lib/auth'
 
-export async function POST() {
-  const response = NextResponse.redirect(new URL('/admin/login', process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'))
+export async function POST(request: Request) {
+  const response = NextResponse.redirect(new URL('/admin/login', request.url))
   response.headers.set('Set-Cookie', clearAuthCookie())
   return response
 }
