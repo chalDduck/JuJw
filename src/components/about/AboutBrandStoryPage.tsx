@@ -414,7 +414,8 @@ export default function AboutBrandStoryPage({ settings }: AboutBrandStoryPagePro
           <div className="flex items-center bg-[#3a2b23] px-6 py-8 text-white sm:px-8 sm:py-10 md:px-10 md:py-12">
             <div className="max-w-[420px]">
               <h2 className="text-[2.2rem] font-semibold leading-[1.28] sm:text-[2.55rem]">
-                일상 속, 빛나는 순간을 함께
+                <span className="block">일상 속, 빛나는</span>
+                <span className="block">순간을 함께</span>
               </h2>
               <p className="mt-5 text-[15px] leading-8 text-white/78">
                 작은 빛 하나가 기분을 바꾸고, 당신의 하루를 특별하게 만듭니다. Ju의 주얼리는 언제나 당신의 곁에서 가장 빛나는 순간을 함께합니다.
@@ -436,7 +437,8 @@ export default function AboutBrandStoryPage({ settings }: AboutBrandStoryPagePro
           <div className="flex items-center px-6 py-8 sm:px-8 sm:py-10 md:px-10">
             <div>
               <h2 className="text-[2rem] font-semibold leading-[1.28] text-[#3e2d23] sm:text-[2.45rem]">
-                당신의 빛나는 이야기를 시작하세요
+                <span className="block">당신의 빛나는 이야기를</span>
+                <span className="block">시작하세요</span>
               </h2>
               <p className="mt-5 max-w-[440px] text-[15px] leading-7 text-[#71604f]">
                 Ju의 컬렉션과 상담을 통해 당신만의 특별한 주얼리를 만나보세요.

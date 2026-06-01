@@ -43,10 +43,20 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background: #fdfcfa;
   font-family: var(--font-body);
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 main {
   font-family: var(--font-body);
+}
+
+main :where(h1, h2, h3) {
+  text-wrap: balance;
+}
+
+main :where(p, li) {
+  text-wrap: pretty;
 }
 
 /* 디스플레이/세리프 의도를 살리기 위해 본문 폰트는 강제하지 않습니다.
