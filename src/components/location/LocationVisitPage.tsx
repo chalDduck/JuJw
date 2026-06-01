@@ -101,8 +101,7 @@ export default function LocationVisitPage({ settings }: LocationVisitPageProps) 
     { href: KAKAO_OPENCHAT_URL, label: '카카오톡', Icon: MessageCircle },
   ]
 
-  // 구글 지도: ju주얼리 실제 장소(좌표 기반)로 고정
-  const mapQuery = settings.address.split(',')[0]?.trim() || settings.address
+  // 구글 지도: 버튼과 같은 ju주얼리 장소 URL 기준으로 고정
   const googleMapEmbed = GOOGLE_MAPS_EMBED_URL
   const googleMapLink = GOOGLE_MAPS_PLACE_URL
 
@@ -258,7 +257,7 @@ export default function LocationVisitPage({ settings }: LocationVisitPageProps) 
 
           <div className="min-h-[300px] overflow-hidden border border-[#e3d6c8] bg-[#efe7dc] md:min-h-[420px]">
             <iframe
-              title={`구글 지도 - ${mapQuery}`}
+              title="구글 지도 - ju주얼리"
               src={googleMapEmbed}
               className="h-full min-h-[300px] w-full md:min-h-[420px]"
               style={{ border: 0 }}
