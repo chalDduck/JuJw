@@ -8,8 +8,8 @@ import { cn } from '@/lib/utils'
 import type { Category, Product } from '@/lib/models'
 
 const ALL_CATEGORY = 'all'
-const COLLECTION_HERO_IMAGE = '/img/products-generated/products-hero-desktop.png'
-const COLLECTION_HERO_MOBILE_IMAGE = '/img/products-generated/products-hero-mobile.png'
+const COLLECTION_HERO_IMAGE = '/img/ju-products-generated/ju-product-08-staged-v2.webp'
+const COLLECTION_HERO_MOBILE_IMAGE = '/img/ju-products-generated/ju-product-08-staged-v2.webp'
 
 type ProductCatalogProps = {
   categories: Category[]
@@ -91,10 +91,10 @@ export default function ProductCatalog({
         <ShowcaseImage
           src={COLLECTION_HERO_IMAGE}
           mobileSrc={COLLECTION_HERO_MOBILE_IMAGE}
-          alt="브라운 새틴 위에 놓인 주얼리"
+          alt="테디베어 팬던트 목걸이"
           loading="eager"
           className="absolute inset-0 h-full w-full bg-[#594233]"
-          imageClassName="object-cover object-[74%_64%] md:object-[82%_58%]"
+          imageClassName="object-cover object-[52%_68%] md:object-[52%_64%]"
         />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(66,42,28,0.72)_0%,rgba(73,48,33,0.46)_48%,rgba(47,30,21,0.18)_100%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_32%,rgba(255,232,214,0.16),transparent_18%),radial-gradient(circle_at_38%_44%,rgba(255,238,220,0.12),transparent_22%)]" />
