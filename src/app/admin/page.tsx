@@ -8,6 +8,7 @@ import {
   PhoneCall,
   Settings as SettingsIcon,
 } from 'lucide-react'
+import AdminShortcutInstall from '@/components/admin/AdminShortcutInstall'
 import { getDashboardSummary } from '@/lib/db'
 
 export const dynamic = 'force-dynamic'
@@ -64,6 +65,8 @@ export default async function AdminDashboardPage() {
         <SummaryStat label="전체 문의" value={summary.totalInquiryCount} />
         <SummaryStat label="공지" value={summary.noticeCount} />
       </div>
+
+      <AdminShortcutInstall />
 
       <div className="grid gap-3 sm:grid-cols-2">
         {menu.map((item) => {

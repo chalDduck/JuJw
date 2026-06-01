@@ -3,6 +3,7 @@
 
 import { FormEvent, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import AdminShortcutInstall from '@/components/admin/AdminShortcutInstall'
 
 export default function AdminLoginPage() {
   const router = useRouter()
@@ -61,7 +62,7 @@ export default function AdminLoginPage() {
               </p>
             </div>
             <p className="mt-10 rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-[14px] leading-7 text-white/70">
-              접속 주소는 <span className="font-semibold text-white">/admin</span> 입니다. 휴대폰에서도 같은 주소로 접속할 수 있습니다.
+              접속 주소는 <span className="font-semibold text-white">jujewelry.com/admin</span> 입니다. 휴대폰에서도 같은 주소로 접속할 수 있습니다.
             </p>
           </section>
 
@@ -109,6 +110,8 @@ export default function AdminLoginPage() {
                 {isLoading ? '로그인 중입니다' : '로그인'}
               </button>
             </form>
+
+            <AdminShortcutInstall compact />
           </section>
         </div>
       </div>

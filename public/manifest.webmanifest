@@ -1,8 +1,8 @@
 {
-  "name": "JU JEWELRY",
-  "short_name": "JU",
-  "description": "종로 귀금속 도매 전문점 JU JEWELRY.",
-  "start_url": "/",
+  "name": "JU JEWELRY 관리자",
+  "short_name": "JU 관리자",
+  "description": "JU JEWELRY 관리자 바로가기.",
+  "start_url": "/admin",
   "scope": "/",
   "display": "standalone",
   "background_color": "#f6f1ea",

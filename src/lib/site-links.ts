@@ -9,4 +9,5 @@ const GOOGLE_MAPS_PLACE_BASE_URL =
   'https://www.google.com/maps/place/ju%EC%A3%BC%EC%96%BC%EB%A6%AC/data=!3m1!4b1!4m6!3m5!1s0x357ca36701a34871:0xeaf25f186d2caae5!8m2!3d37.5709401!4d126.9969905!16s%2Fg%2F11zc4pzrh2?hl=ko'
 
 export const GOOGLE_MAPS_PLACE_URL = GOOGLE_MAPS_PLACE_BASE_URL
-export const GOOGLE_MAPS_EMBED_URL = `${GOOGLE_MAPS_PLACE_BASE_URL}&output=embed`
+export const GOOGLE_MAPS_EMBED_URL =
+  'https://www.google.com/maps/embed?origin=mfe&pb=!1m4!3m2!1m1!4s16929698507754613477!6i17!3m1!1sko!5m1!1sko'

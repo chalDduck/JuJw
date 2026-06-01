@@ -193,7 +193,7 @@ async function pbkdf2(password: string, salt: string, iterations: number): Promi
 }
 
 export async function hashPassword(password: string): Promise<string> {
-  const iterations = 120000
+  const iterations = 20000
   const salt = randomSalt(16)
   const hash = await pbkdf2(password, salt, iterations)
   return `pbkdf2$${iterations}$${salt}$${hash}`
