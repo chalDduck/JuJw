@@ -15,7 +15,8 @@ const display = Cormorant_Garamond({
 
 const siteUrl = getSiteUrl().replace(/\/$/, '')
 const googleVerification = process.env.GOOGLE_SITE_VERIFICATION
-const naverVerification = process.env.NAVER_SITE_VERIFICATION
+const naverVerification =
+  process.env.NAVER_SITE_VERIFICATION || '6dc0d2991cd799a1ad9e8bea6d3044c7d22bed53'
 const verification = {
   ...(googleVerification ? { google: googleVerification } : {}),
   ...(naverVerification ? { other: { 'naver-site-verification': naverVerification } } : {}),
