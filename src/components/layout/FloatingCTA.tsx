@@ -14,7 +14,13 @@ export default function FloatingCTA() {
   const [show, setShow] = useState(false)
   const [phone, setPhone] = useState(DEFAULT_PHONE)
 
+  // 메인(홈)에서는 히어로를 지나 스크롤하면 노출하고, 그 외 페이지에서는 항상 떠 있게 합니다.
   useEffect(() => {
+    if (pathname !== '/') {
+      setShow(true)
+      return
+    }
+
     const onScroll = () => setShow(window.scrollY > window.innerHeight * 0.65)
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
@@ -23,7 +29,7 @@ export default function FloatingCTA() {
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onScroll)
     }
-  }, [])
+  }, [pathname])
 
   useEffect(() => {
     let active = true
