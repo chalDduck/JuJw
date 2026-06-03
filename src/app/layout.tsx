@@ -4,6 +4,8 @@ import './globals.css'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import FloatingCTA from '@/components/layout/FloatingCTA'
+import GoogleAnalytics from '@/components/analytics/GoogleAnalytics'
+import NaverAnalytics from '@/components/analytics/NaverAnalytics'
 import { getSiteUrl } from '@/lib/env'
 
 const display = Cormorant_Garamond({
@@ -17,6 +19,10 @@ const siteUrl = getSiteUrl().replace(/\/$/, '')
 const googleVerification = process.env.GOOGLE_SITE_VERIFICATION
 const naverVerification =
   process.env.NAVER_SITE_VERIFICATION || '6dc0d2991cd799a1ad9e8bea6d3044c7d22bed53'
+const googleAnalyticsId =
+  process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || process.env.GOOGLE_ANALYTICS_MEASUREMENT_ID || 'G-N3J07MS4BK'
+const naverAnalyticsId =
+  process.env.NEXT_PUBLIC_NAVER_ANALYTICS_ID || process.env.NAVER_ANALYTICS_ID || '5ed1b562875318'
 const verification = {
   ...(googleVerification ? { google: googleVerification } : {}),
   ...(naverVerification ? { other: { 'naver-site-verification': naverVerification } } : {}),
@@ -71,6 +77,8 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className={`${display.variable} font-sans bg-bg-primary text-text-default`}>
+        <GoogleAnalytics measurementId={googleAnalyticsId} />
+        <NaverAnalytics trackingId={naverAnalyticsId} />
         <Header />
         <main className="min-h-screen">{children}</main>
         <Footer />
