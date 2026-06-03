@@ -20,7 +20,7 @@ const googleVerification = process.env.GOOGLE_SITE_VERIFICATION
 const naverVerification =
   process.env.NAVER_SITE_VERIFICATION || '6dc0d2991cd799a1ad9e8bea6d3044c7d22bed53'
 const googleAnalyticsId =
-  process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || process.env.GOOGLE_ANALYTICS_MEASUREMENT_ID || 'G-N3J07MS4BK'
+  process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || process.env.GOOGLE_ANALYTICS_MEASUREMENT_ID || 'G-PTLPNJZ2MW'
 const naverAnalyticsId =
   process.env.NEXT_PUBLIC_NAVER_ANALYTICS_ID || process.env.NAVER_ANALYTICS_ID || '5ed1b562875318'
 const verification = {
