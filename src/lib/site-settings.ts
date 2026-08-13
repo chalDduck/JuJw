@@ -66,7 +66,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   phonePrimary: '02-744-6268',
   phoneSecondary: '',
   email: 'bok00ju@naver.com',
-  address: '서울 종로구 종로 173, 143호',
+  address: '서울 종로구 종로 173, 125호',
   businessHours: '매일 10:30 - 18:30',
   closedDay: '매달 셋째 주 화요일',
   naverMapUrl: 'https://map.naver.com/p/search/서울 종로구 종로 173',
