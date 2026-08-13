@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { ReactNode, useMemo } from 'react'
+import { ReactNode, useEffect, useMemo } from 'react'
 import { usePathname } from 'next/navigation'
 import {
   ChevronLeft,
@@ -17,12 +17,12 @@ import {
 import AdminLogoutButton from '@/components/admin/AdminLogoutButton'
 
 const navItems = [
-  { href: '/admin', label: '처음', icon: LayoutDashboard },
+  { href: '/admin', label: '관리자 홈', icon: LayoutDashboard },
   { href: '/admin/products', label: '제품', icon: Package2 },
   { href: '/admin/inquiries', label: '문의', icon: PhoneCall },
-  { href: '/admin/notices', label: '공지', icon: Megaphone },
-  { href: '/admin/home', label: '홈 문구', icon: Home },
-  { href: '/admin/faq', label: '질문답변', icon: CircleHelp },
+  { href: '/admin/notices', label: '공지사항', icon: Megaphone },
+  { href: '/admin/home', label: '홈 화면 글', icon: Home },
+  { href: '/admin/faq', label: '자주 묻는 질문', icon: CircleHelp },
   { href: '/admin/settings', label: '매장 정보', icon: SettingsIcon },
 ]
 
@@ -42,6 +42,7 @@ function isActive(pathname: string, href: string) {
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname()
+  const isLogin = pathname === '/admin/login'
   const isDashboard = pathname === '/admin'
   const currentRoute = useMemo(
     () =>
@@ -51,8 +52,17 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     [pathname]
   )
 
+  useEffect(() => {
+    document.body.classList.add('admin-page')
+    return () => document.body.classList.remove('admin-page')
+  }, [])
+
+  if (isLogin) {
+    return <div data-admin-page>{children}</div>
+  }
+
   return (
-    <div className="admin-flat-shell min-h-[100dvh] bg-[#f3f0ea] text-stone-950 lg:h-screen lg:overflow-hidden">
+    <div data-admin-page className="admin-flat-shell min-h-[100dvh] bg-[#f3f0ea] text-stone-950 lg:h-screen lg:overflow-hidden">
       <div className="lg:grid lg:h-screen lg:grid-cols-[260px_minmax(0,1fr)]">
         {/* 데스크탑 사이드바 */}
         <aside className="hidden border-r border-stone-200 bg-[#211a16] text-white lg:flex lg:min-h-0 lg:flex-col">
@@ -107,7 +117,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                     className="inline-flex min-h-[48px] items-center gap-1 rounded-2xl bg-stone-900 pl-2 pr-4 text-[16px] font-semibold text-white transition active:translate-y-px lg:hidden"
                   >
                     <ChevronLeft size={22} strokeWidth={2} />
-                    처음
+                    관리자 홈
                   </Link>
                 ) : null}
                 <div className="min-w-0">
@@ -121,11 +131,11 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                 target="_blank"
                 className="inline-flex min-h-[48px] shrink-0 items-center gap-2 rounded-2xl border border-stone-300 bg-white px-4 text-[15px] font-semibold text-stone-700 transition active:translate-y-px hover:border-stone-400"
               >
-                <span className="hidden sm:inline">홈페이지</span>
+                <span>사이트 보기</span>
                 <ExternalLink size={18} />
               </Link>
             </div>
-            <p className="border-t border-stone-200 px-4 py-2.5 text-[14px] leading-5 text-stone-500 sm:px-6 lg:px-8">
+            <p className="border-t border-stone-200 px-4 py-2.5 text-[16px] leading-6 text-stone-600 sm:px-6 lg:px-8">
               {currentRoute.description}
             </p>
           </header>

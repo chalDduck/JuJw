@@ -4,7 +4,7 @@
 
 import { ChangeEvent, FormEvent, ReactNode, Suspense, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { Camera, ImagePlus, PackagePlus, Save, Search, Trash2 } from 'lucide-react'
+import { ArrowLeft, Camera, ImagePlus, List, PackagePlus, Save, Search, Trash2 } from 'lucide-react'
 
 type Category = { id: number; name: string; slug: string }
 
@@ -69,6 +69,7 @@ export default function AdminProductsPage() {
 
 function ProductsManager() {
   const searchParams = useSearchParams()
+  const [mode, setMode] = useState<'list' | 'form'>('list')
   const [categories, setCategories] = useState<Category[]>([])
   const [products, setProducts] = useState<Product[]>([])
   const [selectedId, setSelectedId] = useState<number | null>(null)
@@ -83,6 +84,7 @@ function ProductsManager() {
   const [message, setMessage] = useState('')
 
   const hydrateForm = (product: Product) => {
+    setMode('form')
     setSelectedId(product.id)
     setForm({
       categoryId: String(product.categoryId),
@@ -120,11 +122,12 @@ function ProductsManager() {
   }
 
   const resetForm = () => {
+    setMode('form')
     setSelectedId(null)
     setForm({ ...initialForm, categoryId: categories[0] ? String(categories[0].id) : '' })
     setError('')
     setMessage('')
-    if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' })
+    if (typeof window !== 'undefined') window.scrollTo({ top: 0 })
   }
 
   useEffect(() => {
@@ -209,7 +212,10 @@ function ProductsManager() {
     }
     setMessage('제품을 삭제했습니다.')
     await load()
-    resetForm()
+    setSelectedId(null)
+    setForm({ ...initialForm, categoryId: categories[0] ? String(categories[0].id) : '' })
+    setMode('list')
+    if (typeof window !== 'undefined') window.scrollTo({ top: 0 })
   }
 
   const uploadFiles = async (files: FileList | null) => {
@@ -270,6 +276,44 @@ function ProductsManager() {
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
+      <section className="rounded-3xl border border-stone-200 bg-white p-4 sm:p-5">
+        <p className="mb-3 text-[16px] font-semibold text-stone-700">원하는 작업을 먼저 선택해 주세요.</p>
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              setMode('list')
+              setError('')
+              setMessage('')
+            }}
+            aria-pressed={mode === 'list'}
+            className={`inline-flex min-h-[60px] items-center justify-center gap-2 border px-3 text-[16px] font-bold transition ${
+              mode === 'list'
+                ? 'border-stone-900 bg-stone-900 text-white'
+                : 'border-stone-300 bg-white text-stone-800 hover:bg-stone-50'
+            }`}
+          >
+            <List size={20} />
+            등록 제품 보기
+          </button>
+          <button
+            type="button"
+            onClick={resetForm}
+            aria-pressed={mode === 'form' && !selectedProduct}
+            className={`inline-flex min-h-[60px] items-center justify-center gap-2 border px-3 text-[16px] font-bold transition ${
+              mode === 'form' && !selectedProduct
+                ? 'border-stone-900 bg-stone-900 text-white'
+                : 'border-stone-300 bg-white text-stone-800 hover:bg-stone-50'
+            }`}
+          >
+            <PackagePlus size={20} />
+            새 제품 등록
+          </button>
+        </div>
+      </section>
+
+      {mode === 'form' ? (
+        <>
       {/* 1) 제품 정보 입력 */}
       <form className="rounded-3xl border border-stone-200 bg-white p-5 sm:p-6" onSubmit={onSubmit}>
         <div className="flex items-center justify-between gap-3">
@@ -279,20 +323,21 @@ function ProductsManager() {
           {selectedProduct ? (
             <button
               type="button"
-              onClick={resetForm}
-              className="inline-flex min-h-[44px] items-center gap-1.5 rounded-xl border border-stone-300 px-3 text-[14px] font-semibold text-stone-700 transition active:translate-y-px hover:bg-stone-50"
+              onClick={() => setMode('list')}
+              className="inline-flex min-h-[48px] items-center gap-1.5 rounded-xl border border-stone-300 px-3 text-[15px] font-semibold text-stone-700 transition active:translate-y-px hover:bg-stone-50"
             >
-              <PackagePlus size={16} />
-              새 제품
+              <ArrowLeft size={18} />
+              목록으로
             </button>
           ) : null}
         </div>
-        <p className="mt-1 text-[14px] text-stone-500">위에서부터 차례대로 입력하고 맨 아래 저장을 누르세요.</p>
+        <p className="mt-1 text-[16px] leading-7 text-stone-600">위에서부터 차례대로 입력하고 맨 아래 저장을 누르세요.</p>
 
         <div className="mt-5 space-y-4">
           <div>
-            <label className="mb-2 block text-[15px] font-semibold text-stone-800">1. 카테고리</label>
+            <label htmlFor="product-category" className="mb-2 block text-[16px] font-semibold text-stone-800">1. 카테고리</label>
             <select
+              id="product-category"
               value={form.categoryId}
               onChange={(e) => setForm((prev) => ({ ...prev, categoryId: e.target.value }))}
               className={inputClass}
@@ -305,8 +350,9 @@ function ProductsManager() {
           </div>
 
           <div>
-            <label className="mb-2 block text-[15px] font-semibold text-stone-800">2. 제품명</label>
+            <label htmlFor="product-name" className="mb-2 block text-[16px] font-semibold text-stone-800">2. 제품명</label>
             <input
+              id="product-name"
               value={form.name}
               onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
               placeholder="예: 18K 다이아 반지"
@@ -315,8 +361,9 @@ function ProductsManager() {
           </div>
 
           <div>
-            <label className="mb-2 block text-[15px] font-semibold text-stone-800">3. 스펙 (선택)</label>
+            <label htmlFor="product-spec" className="mb-2 block text-[16px] font-semibold text-stone-800">3. 제품 정보 (선택)</label>
             <input
+              id="product-spec"
               value={form.spec}
               onChange={(e) => setForm((prev) => ({ ...prev, spec: e.target.value }))}
               placeholder="예: 18K / Diamond 0.3ct"
@@ -325,8 +372,9 @@ function ProductsManager() {
           </div>
 
           <div>
-            <label className="mb-2 block text-[15px] font-semibold text-stone-800">4. 설명 (선택)</label>
+            <label htmlFor="product-description" className="mb-2 block text-[16px] font-semibold text-stone-800">4. 자세한 설명 (선택)</label>
             <textarea
+              id="product-description"
               value={form.description}
               onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))}
               rows={4}
@@ -347,8 +395,8 @@ function ProductsManager() {
             </div>
           </div>
 
-          {error ? <p className="rounded-2xl bg-red-50 px-4 py-3 text-[15px] text-red-700">{error}</p> : null}
-          {message ? <p className="rounded-2xl bg-emerald-50 px-4 py-3 text-[15px] text-emerald-700">{message}</p> : null}
+          {error ? <p role="alert" className="rounded-2xl bg-red-50 px-4 py-3 text-[16px] font-semibold text-red-800">{error}</p> : null}
+          {message ? <p role="status" aria-live="polite" className="rounded-2xl bg-emerald-50 px-4 py-3 text-[16px] font-semibold text-emerald-800">{message}</p> : null}
 
           <div className="flex flex-col gap-2 sm:flex-row">
             <button
@@ -378,14 +426,14 @@ function ProductsManager() {
         <h2 className="text-[18px] font-bold tracking-tight text-stone-950">제품 사진</h2>
         {selectedProduct ? (
           <>
-            <p className="mt-1 text-[14px] text-stone-500">
+            <p className="mt-1 text-[16px] leading-7 text-stone-600">
               현재 {selectedProduct.images?.length ?? 0}장. 카메라로 찍거나 앨범에서 고를 수 있습니다.
             </p>
             <div className="mt-4 grid gap-2 sm:grid-cols-2">
               <UploadButton label="카메라로 촬영" Icon={Camera} capture onChange={onUploadChange} />
               <UploadButton label="앨범에서 선택" Icon={ImagePlus} multiple onChange={onUploadChange} />
             </div>
-            {isUploading ? <p className="mt-3 text-[14px] text-stone-500">사진 올리는 중입니다…</p> : null}
+            {isUploading ? <p className="mt-3 text-[16px] text-stone-600">사진 올리는 중입니다…</p> : null}
 
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               {selectedProduct.images?.map((image) => (
@@ -427,7 +475,11 @@ function ProductsManager() {
         )}
       </section>
 
+        </>
+      ) : null}
+
       {/* 3) 등록된 제품 목록 */}
+      {mode === 'list' ? (
       <section className="rounded-3xl border border-stone-200 bg-white p-5 sm:p-6">
         <h2 className="text-[18px] font-bold tracking-tight text-stone-950">등록된 제품 ({filteredProducts.length})</h2>
         <div className="mt-4 space-y-2">
@@ -490,7 +542,7 @@ function ProductsManager() {
                   </div>
                   <div className="min-w-0 self-center">
                     <p className="truncate text-[16px] font-semibold">{product.name}</p>
-                    <p className={`mt-0.5 truncate text-[13px] ${active ? 'text-white/60' : 'text-stone-500'}`}>
+                    <p className={`mt-0.5 truncate text-[15px] ${active ? 'text-white/80' : 'text-stone-600'}`}>
                       {product.categoryName || '카테고리 없음'} · {product.isPublished ? '공개' : '숨김'}
                       {product.isFeatured ? ' · 홈 추천' : ''}
                     </p>
@@ -501,6 +553,7 @@ function ProductsManager() {
           )}
         </div>
       </section>
+      ) : null}
     </div>
   )
 }
@@ -510,6 +563,7 @@ function ToggleButton({ active, onClick, children }: { active: boolean; onClick:
     <button
       type="button"
       onClick={onClick}
+      aria-pressed={active}
       className={`min-h-[54px] rounded-2xl text-[15px] font-semibold transition active:translate-y-px ${
         active ? 'bg-stone-900 text-white' : 'border border-stone-300 bg-white text-stone-600'
       }`}

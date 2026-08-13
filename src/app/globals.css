@@ -127,6 +127,21 @@ body.notices-reference-page [data-site-footer] {
   background: #f3f0ea;
 }
 
+body.admin-page [data-site-footer],
+body:has([data-admin-page]) [data-site-footer] {
+  display: none;
+}
+
+html:has(body.admin-page) {
+  scroll-behavior: auto;
+}
+
+.admin-flat-shell :where(a, button, input, select, textarea):focus-visible,
+[data-admin-page] :where(a, button, input, select, textarea):focus-visible {
+  outline: 3px solid #a16207;
+  outline-offset: 3px;
+}
+
 .admin-flat-shell [class*="rounded"] {
   border-radius: var(--admin-radius) !important;
 }

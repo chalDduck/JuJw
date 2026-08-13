@@ -44,7 +44,7 @@ export default function AdminFaqPage() {
     setSelectedId(faq.id)
     setForm({ category: faq.category, question: faq.question, answer: faq.answer })
     setMessage('')
-    if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' })
+    if (typeof window !== 'undefined') window.scrollTo({ top: 0 })
   }
 
   const resetForm = () => {
@@ -110,12 +110,13 @@ export default function AdminFaqPage() {
         <h2 className="text-[20px] font-bold tracking-tight text-stone-950">
           {selectedFaq ? '질문 수정' : '새 질문 작성'}
         </h2>
-        <p className="mt-1 text-[14px] text-stone-500">저장하면 FAQ 페이지에 바로 올라갑니다.</p>
+        <p className="mt-1 text-[16px] leading-7 text-stone-600">저장하면 FAQ 페이지에 바로 올라갑니다.</p>
 
         <div className="mt-5 space-y-4">
           <div>
-            <label className="mb-2 block text-[15px] font-semibold text-stone-800">분류</label>
+            <label htmlFor="faq-category" className="mb-2 block text-[16px] font-semibold text-stone-800">분류</label>
             <select
+              id="faq-category"
               value={form.category}
               onChange={(e) => setForm((prev) => ({ ...prev, category: e.target.value }))}
               className={inputClass}
@@ -126,8 +127,9 @@ export default function AdminFaqPage() {
             </select>
           </div>
           <div>
-            <label className="mb-2 block text-[15px] font-semibold text-stone-800">질문</label>
+            <label htmlFor="faq-question" className="mb-2 block text-[16px] font-semibold text-stone-800">질문</label>
             <input
+              id="faq-question"
               value={form.question}
               onChange={(e) => setForm((prev) => ({ ...prev, question: e.target.value }))}
               placeholder="예: 최소 주문 수량이 있나요?"
@@ -135,8 +137,9 @@ export default function AdminFaqPage() {
             />
           </div>
           <div>
-            <label className="mb-2 block text-[15px] font-semibold text-stone-800">답변</label>
+            <label htmlFor="faq-answer" className="mb-2 block text-[16px] font-semibold text-stone-800">답변</label>
             <textarea
+              id="faq-answer"
               value={form.answer}
               onChange={(e) => setForm((prev) => ({ ...prev, answer: e.target.value }))}
               rows={6}
@@ -147,6 +150,8 @@ export default function AdminFaqPage() {
 
           {message ? (
             <p
+              role={message.includes('실패') || message.includes('입력') ? 'alert' : 'status'}
+              aria-live="polite"
               className={`rounded-2xl px-4 py-3 text-[15px] ${
                 message.includes('실패') || message.includes('입력')
                   ? 'bg-red-50 text-red-700'
@@ -191,11 +196,11 @@ export default function AdminFaqPage() {
           <ul className="space-y-3">
             {faqs.map((faq) => (
               <li key={faq.id} className="rounded-2xl border border-stone-200 p-4">
-                <span className="inline-flex rounded-full bg-stone-100 px-2.5 py-1 text-[12px] font-semibold text-stone-600">
+                <span className="inline-flex rounded-full bg-stone-100 px-2.5 py-1 text-[14px] font-semibold text-stone-700">
                   {categoryName(faq.category)}
                 </span>
                 <p className="mt-2 text-[16px] font-semibold text-stone-950">{faq.question}</p>
-                <p className="mt-1 line-clamp-2 text-[14px] leading-6 text-stone-500">{faq.answer}</p>
+                <p className="mt-1 line-clamp-2 text-[15px] leading-7 text-stone-600">{faq.answer}</p>
                 <div className="mt-3 grid grid-cols-2 gap-2">
                   <button
                     type="button"

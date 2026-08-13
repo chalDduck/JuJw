@@ -67,6 +67,7 @@ const textareaClass =
 
 export default function AdminSettingsPage() {
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS)
+  const [activeGroupIndex, setActiveGroupIndex] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [message, setMessage] = useState('')
@@ -108,45 +109,75 @@ export default function AdminSettingsPage() {
     return <p className="mx-auto max-w-2xl p-6 text-[16px] text-stone-500">불러오는 중입니다…</p>
   }
 
+  const activeGroup = GROUPS[activeGroupIndex] ?? GROUPS[0]
+
   return (
     <form className="mx-auto max-w-2xl pb-28" onSubmit={onSubmit}>
-      <div className="space-y-5">
-        {GROUPS.map((group) => (
-          <section key={group.title} className="rounded-3xl border border-stone-200 bg-white p-5 sm:p-6">
-            <h2 className="mb-4 text-[18px] font-bold tracking-tight text-stone-950">{group.title}</h2>
-            <div className="space-y-4">
-              {group.fields.map((field) => (
-                <div key={field.key}>
-                  <label className="mb-2 block text-[15px] font-semibold text-stone-800">{field.label}</label>
-                  {field.multiline ? (
-                    <textarea
-                      value={settings[field.key] || ''}
-                      onChange={(e) => updateSetting(field.key, e.target.value)}
-                      placeholder={field.placeholder}
-                      rows={2}
-                      className={textareaClass}
-                    />
-                  ) : (
-                    <input
-                      value={settings[field.key] || ''}
-                      onChange={(e) => updateSetting(field.key, e.target.value)}
-                      placeholder={field.placeholder}
-                      className={inputClass}
-                    />
-                  )}
-                  {field.helper ? <p className="mt-1.5 text-[13px] leading-5 text-stone-500">{field.helper}</p> : null}
-                </div>
-              ))}
-            </div>
-          </section>
-        ))}
-      </div>
+      <section className="mb-5 rounded-3xl border border-stone-200 bg-white p-5 sm:p-6">
+        <h2 className="text-[20px] font-bold tracking-tight text-stone-950">무엇을 바꾸시나요?</h2>
+        <p className="mt-1 text-[16px] leading-7 text-stone-600">한 항목을 누르면 필요한 입력칸만 보입니다.</p>
+        <div className="mt-4 grid gap-2 sm:grid-cols-2">
+          {GROUPS.map((group, index) => {
+            const active = index === activeGroupIndex
+            return (
+              <button
+                key={group.title}
+                type="button"
+                onClick={() => setActiveGroupIndex(index)}
+                aria-pressed={active}
+                className={`min-h-[58px] border px-4 text-left text-[16px] font-bold transition ${
+                  active
+                    ? 'border-stone-900 bg-stone-900 text-white'
+                    : 'border-stone-300 bg-white text-stone-800 hover:bg-stone-50'
+                }`}
+              >
+                {group.title}
+              </button>
+            )
+          })}
+        </div>
+      </section>
+
+      <section className="rounded-3xl border border-stone-200 bg-white p-5 sm:p-6">
+        <h2 className="mb-5 text-[20px] font-bold tracking-tight text-stone-950">{activeGroup.title}</h2>
+        <div className="space-y-5">
+          {activeGroup.fields.map((field) => {
+            const fieldId = `setting-${field.key}`
+            return (
+              <div key={field.key}>
+                <label htmlFor={fieldId} className="mb-2 block text-[16px] font-semibold text-stone-800">{field.label}</label>
+                {field.multiline ? (
+                  <textarea
+                    id={fieldId}
+                    value={settings[field.key] || ''}
+                    onChange={(e) => updateSetting(field.key, e.target.value)}
+                    placeholder={field.placeholder}
+                    rows={3}
+                    className={textareaClass}
+                  />
+                ) : (
+                  <input
+                    id={fieldId}
+                    value={settings[field.key] || ''}
+                    onChange={(e) => updateSetting(field.key, e.target.value)}
+                    placeholder={field.placeholder}
+                    className={inputClass}
+                  />
+                )}
+                {field.helper ? <p className="mt-1.5 text-[15px] leading-6 text-stone-600">{field.helper}</p> : null}
+              </div>
+            )
+          })}
+        </div>
+      </section>
 
       {/* 맨 아래 고정 저장바 */}
       <div className="sticky bottom-0 z-20 mt-5 -mx-4 border-t border-stone-200 bg-[#f3f0ea]/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
         {message ? (
           <p
-            className={`mb-2 rounded-2xl px-4 py-2.5 text-[14px] ${
+            role={message.includes('실패') ? 'alert' : 'status'}
+            aria-live="polite"
+            className={`mb-2 rounded-2xl px-4 py-2.5 text-[16px] font-semibold ${
               message.includes('실패') ? 'bg-red-50 text-red-700' : 'bg-emerald-50 text-emerald-700'
             }`}
           >

@@ -15,9 +15,9 @@ type Inquiry = {
 }
 
 const STATUS_OPTIONS: Array<{ value: Inquiry['status']; label: string }> = [
-  { value: 'pending', label: '대기' },
-  { value: 'contacted', label: '연락' },
-  { value: 'completed', label: '완료' },
+  { value: 'pending', label: '연락 전' },
+  { value: 'contacted', label: '연락함' },
+  { value: 'completed', label: '처리 끝' },
 ]
 
 const STATUS_PRIORITY: Record<Inquiry['status'], number> = {
@@ -31,6 +31,8 @@ export default function AdminInquiriesPage() {
   const [filter, setFilter] = useState<'all' | Inquiry['status']>('all')
   const [isLoading, setIsLoading] = useState(true)
   const [updatingId, setUpdatingId] = useState<number | null>(null)
+  const [message, setMessage] = useState('')
+  const [error, setError] = useState('')
 
   const load = async () => {
     const response = await fetch('/api/admin/inquiries', { cache: 'no-store' })
@@ -47,13 +49,20 @@ export default function AdminInquiriesPage() {
 
   const updateStatus = async (id: number, status: Inquiry['status']) => {
     setUpdatingId(id)
+    setMessage('')
+    setError('')
     try {
       const response = await fetch(`/api/admin/inquiries/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status }),
       })
-      if (response.ok) await load()
+      if (!response.ok) throw new Error('상태 변경에 실패했습니다.')
+      await load()
+      const label = STATUS_OPTIONS.find((option) => option.value === status)?.label ?? '변경한 상태'
+      setMessage(`문의 상태를 “${label}”으로 바꿨습니다.`)
+    } catch {
+      setError('상태를 바꾸지 못했습니다. 잠시 후 다시 눌러 주세요.')
     } finally {
       setUpdatingId(null)
     }
@@ -86,9 +95,9 @@ export default function AdminInquiriesPage() {
       <aside className="rounded-[24px] border border-stone-200 bg-white p-3 lg:min-h-0 lg:overflow-y-auto">
         {[
           { value: 'all', label: '전체', count: counts.all },
-          { value: 'pending', label: '바로 연락', count: counts.pending },
-          { value: 'contacted', label: '연락 완료', count: counts.contacted },
-          { value: 'completed', label: '처리 완료', count: counts.completed },
+          { value: 'pending', label: '연락 전', count: counts.pending },
+          { value: 'contacted', label: '연락함', count: counts.contacted },
+          { value: 'completed', label: '처리 끝', count: counts.completed },
         ].map((item) => (
           <button
             key={item.value}
@@ -108,10 +117,21 @@ export default function AdminInquiriesPage() {
         <div className="flex items-center justify-between border-b border-stone-200 px-4 py-4 sm:px-5">
           <div>
             <h2 className="text-xl font-semibold tracking-tight text-stone-950">문의 목록</h2>
-            <p className="mt-1 text-[14px] text-stone-500">전화 후 상태만 바꾸면 됩니다.</p>
+            <p className="mt-1 text-[16px] text-stone-600">전화 후 상태만 바꾸면 됩니다.</p>
           </div>
           <p className="text-sm font-semibold text-stone-500">{sortedInquiries.length}건</p>
         </div>
+
+        {message ? (
+          <p role="status" aria-live="polite" className="mx-4 mt-4 bg-emerald-50 px-4 py-3 text-[16px] font-semibold text-emerald-800 sm:mx-5">
+            {message}
+          </p>
+        ) : null}
+        {error ? (
+          <p role="alert" className="mx-4 mt-4 bg-red-50 px-4 py-3 text-[16px] font-semibold text-red-800 sm:mx-5">
+            {error}
+          </p>
+        ) : null}
 
         <div className="divide-y divide-stone-200 lg:max-h-[calc(100dvh-185px)] lg:overflow-y-auto">
           {isLoading ? (
@@ -125,12 +145,12 @@ export default function AdminInquiriesPage() {
                   <div className="flex flex-wrap items-center gap-2">
                     <h3 className="break-words text-lg font-semibold tracking-tight text-stone-950">{inquiry.companyName}</h3>
                     {inquiry.interest ? (
-                      <span className="rounded-full bg-stone-100 px-3 py-1 text-xs font-semibold text-stone-500">
+                      <span className="rounded-full bg-stone-100 px-3 py-1 text-[15px] font-semibold text-stone-700">
                         {inquiry.interest}
                       </span>
                     ) : null}
                   </div>
-                  <p className="mt-1 text-[13px] text-stone-400">{new Date(inquiry.createdAt).toLocaleString('ko-KR')}</p>
+                  <p className="mt-1 text-[15px] text-stone-600">{new Date(inquiry.createdAt).toLocaleString('ko-KR')}</p>
                   {inquiry.message ? (
                     <p className="mt-3 whitespace-pre-line break-words text-[15px] leading-7 text-stone-700">{inquiry.message}</p>
                   ) : (
@@ -154,6 +174,7 @@ export default function AdminInquiriesPage() {
                         type="button"
                         onClick={() => void updateStatus(inquiry.id, option.value)}
                         disabled={updatingId === inquiry.id}
+                        aria-pressed={inquiry.status === option.value}
                         className={`min-h-[54px] rounded-2xl text-[15px] font-semibold transition active:translate-y-px disabled:opacity-60 ${
                           inquiry.status === option.value
                             ? 'bg-stone-900 text-white'

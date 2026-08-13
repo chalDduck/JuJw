@@ -60,14 +60,6 @@ export default async function AdminDashboardPage() {
         </div>
       )}
 
-      <div className="grid grid-cols-3 gap-3">
-        <SummaryStat label="등록 제품" value={summary.productCount} />
-        <SummaryStat label="전체 문의" value={summary.totalInquiryCount} />
-        <SummaryStat label="공지" value={summary.noticeCount} />
-      </div>
-
-      <AdminShortcutInstall />
-
       <div className="grid gap-3 sm:grid-cols-2">
         {menu.map((item) => {
           const Icon = item.Icon
@@ -82,7 +74,7 @@ export default async function AdminDashboardPage() {
               </span>
               <div className="min-w-0 flex-1">
                 <p className="text-[19px] font-bold tracking-tight text-stone-950">{item.title}</p>
-                <p className="mt-0.5 text-[14px] leading-6 text-stone-500">{item.description}</p>
+                <p className="mt-0.5 text-[16px] leading-7 text-stone-600">{item.description}</p>
               </div>
               <ChevronRight size={22} strokeWidth={2} className="shrink-0 text-stone-400" />
             </Link>
@@ -90,7 +82,21 @@ export default async function AdminDashboardPage() {
         })}
       </div>
 
-      <p className="px-1 pb-2 text-center text-[13px] leading-6 text-stone-400">
+      <div className="grid grid-cols-3 gap-3">
+        <SummaryStat label="등록 제품" value={summary.productCount} />
+        <SummaryStat label="전체 문의" value={summary.totalInquiryCount} />
+        <SummaryStat label="공지" value={summary.noticeCount} />
+      </div>
+
+      <details className="border border-stone-200 bg-white p-4 sm:p-5">
+        <summary className="cursor-pointer text-[17px] font-bold text-stone-900">
+          휴대폰에 관리자 바로가기 만들기
+        </summary>
+        <p className="mt-2 text-[15px] leading-6 text-stone-600">처음 한 번만 설정하면 다음부터 아이콘으로 바로 들어올 수 있습니다.</p>
+        <AdminShortcutInstall compact />
+      </details>
+
+      <p className="px-1 pb-2 text-center text-[15px] leading-7 text-stone-600">
         화면이 어렵게 느껴지면 각 항목을 눌러 하나씩 천천히 진행하세요.
       </p>
     </div>
@@ -101,7 +107,7 @@ function SummaryStat({ label, value }: { label: string; value: number }) {
   return (
     <div className="rounded-2xl border border-stone-200 bg-white px-3 py-4 text-center">
       <p className="text-[28px] font-bold leading-none tracking-tight text-stone-950">{value}</p>
-      <p className="mt-2 text-[13px] font-semibold text-stone-500">{label}</p>
+      <p className="mt-2 text-[15px] font-semibold text-stone-600">{label}</p>
     </div>
   )
 }

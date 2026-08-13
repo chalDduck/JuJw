@@ -156,13 +156,14 @@ const SECTIONS: Section[] = [
 ]
 
 const inputClass =
-  'min-h-[48px] w-full rounded-xl border border-stone-300 bg-white px-3 text-[15px] text-stone-950 outline-none transition focus:border-stone-900 focus:ring-2 focus:ring-stone-200/80'
+  'min-h-[56px] w-full rounded-xl border border-stone-300 bg-white px-4 text-[17px] text-stone-950 outline-none transition focus:border-stone-900 focus:ring-4 focus:ring-stone-200/80'
 
 const textareaClass =
-  'w-full rounded-xl border border-stone-300 bg-white px-3 py-3 text-[15px] leading-7 text-stone-950 outline-none transition focus:border-stone-900 focus:ring-2 focus:ring-stone-200/80'
+  'w-full rounded-xl border border-stone-300 bg-white px-4 py-3 text-[17px] leading-8 text-stone-950 outline-none transition focus:border-stone-900 focus:ring-4 focus:ring-stone-200/80'
 
 export default function AdminHomePage() {
   const [settings, setSettings] = useState<Settings>(DEFAULT_HOME_SETTINGS)
+  const [activeSectionId, setActiveSectionId] = useState(SECTIONS[0].id)
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [message, setMessage] = useState('')
@@ -210,6 +211,9 @@ export default function AdminHomePage() {
     return <p className="mx-auto max-w-2xl p-6 text-[16px] text-stone-500">불러오는 중입니다…</p>
   }
 
+  const activeSection = SECTIONS.find((section) => section.id === activeSectionId) ?? SECTIONS[0]
+  const activeSectionIndex = SECTIONS.findIndex((section) => section.id === activeSection.id)
+
   return (
     <form className="mx-auto max-w-2xl pb-28" onSubmit={onSubmit}>
       <Link
@@ -221,43 +225,71 @@ export default function AdminHomePage() {
         <ExternalLink size={16} />
       </Link>
 
-      <div className="space-y-5">
-        {SECTIONS.map((section, index) => (
-          <section key={section.id} className="rounded-3xl border border-stone-200 bg-white p-5 sm:p-6">
-            <h2 className="text-[18px] font-bold tracking-tight text-stone-950">
-              {index + 1}. {section.title}
-            </h2>
-            <p className="mt-1 text-[14px] leading-6 text-stone-500">{section.description}</p>
-            <div className="mt-4 space-y-4">
-              {section.fields.map((field) => (
-                <div key={field.key}>
-                  <label className="mb-2 block text-[15px] font-semibold text-stone-800">{field.label}</label>
-                  {field.multiline ? (
-                    <textarea
-                      value={settings[field.key] || ''}
-                      onChange={(event) => updateSetting(field.key, event.target.value)}
-                      rows={2}
-                      className={textareaClass}
-                    />
-                  ) : (
-                    <input
-                      value={settings[field.key] || ''}
-                      onChange={(event) => updateSetting(field.key, event.target.value)}
-                      className={inputClass}
-                    />
-                  )}
-                  {field.helper ? <p className="mt-1.5 text-[13px] leading-5 text-stone-500">{field.helper}</p> : null}
-                </div>
-              ))}
-            </div>
-          </section>
-        ))}
-      </div>
+      <section className="mb-5 rounded-3xl border border-stone-200 bg-white p-5 sm:p-6">
+        <h2 className="text-[20px] font-bold tracking-tight text-stone-950">어느 부분을 바꾸시나요?</h2>
+        <p className="mt-1 text-[16px] leading-7 text-stone-600">아래에서 한 곳을 누르면 해당 입력칸만 보입니다.</p>
+        <div className="mt-4 grid gap-2 sm:grid-cols-2">
+          {SECTIONS.map((section) => {
+            const active = section.id === activeSection.id
+            return (
+              <button
+                key={section.id}
+                type="button"
+                onClick={() => setActiveSectionId(section.id)}
+                aria-pressed={active}
+                className={`min-h-[58px] border px-4 text-left text-[16px] font-bold transition ${
+                  active
+                    ? 'border-stone-900 bg-stone-900 text-white'
+                    : 'border-stone-300 bg-white text-stone-800 hover:bg-stone-50'
+                }`}
+              >
+                {section.title}
+              </button>
+            )
+          })}
+        </div>
+      </section>
+
+      <section className="rounded-3xl border border-stone-200 bg-white p-5 sm:p-6">
+        <h2 className="text-[20px] font-bold tracking-tight text-stone-950">
+          {activeSectionIndex + 1}. {activeSection.title}
+        </h2>
+        <p className="mt-1 text-[16px] leading-7 text-stone-600">{activeSection.description}</p>
+        <div className="mt-5 space-y-5">
+          {activeSection.fields.map((field) => {
+            const fieldId = `home-${field.key}`
+            return (
+              <div key={field.key}>
+                <label htmlFor={fieldId} className="mb-2 block text-[16px] font-semibold text-stone-800">{field.label}</label>
+                {field.multiline ? (
+                  <textarea
+                    id={fieldId}
+                    value={settings[field.key] || ''}
+                    onChange={(event) => updateSetting(field.key, event.target.value)}
+                    rows={3}
+                    className={textareaClass}
+                  />
+                ) : (
+                  <input
+                    id={fieldId}
+                    value={settings[field.key] || ''}
+                    onChange={(event) => updateSetting(field.key, event.target.value)}
+                    className={inputClass}
+                  />
+                )}
+                {field.helper ? <p className="mt-1.5 text-[15px] leading-6 text-stone-600">{field.helper}</p> : null}
+              </div>
+            )
+          })}
+        </div>
+      </section>
 
       <div className="sticky bottom-0 z-20 mt-5 -mx-4 border-t border-stone-200 bg-[#f3f0ea]/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
         {message ? (
           <p
-            className={`mb-2 rounded-2xl px-4 py-2.5 text-[14px] ${
+            role={message.includes('실패') ? 'alert' : 'status'}
+            aria-live="polite"
+            className={`mb-2 rounded-2xl px-4 py-2.5 text-[16px] font-semibold ${
               message.includes('실패') ? 'bg-red-50 text-red-700' : 'bg-emerald-50 text-emerald-700'
             }`}
           >

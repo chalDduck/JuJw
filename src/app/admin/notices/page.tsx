@@ -70,7 +70,7 @@ export default function AdminNoticesPage() {
     })
     setError('')
     setMessage('')
-    if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' })
+    if (typeof window !== 'undefined') window.scrollTo({ top: 0 })
   }
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -130,12 +130,13 @@ export default function AdminNoticesPage() {
         <h2 className="text-[20px] font-bold tracking-tight text-stone-950">
           {selectedId ? '공지 수정' : '새 공지 작성'}
         </h2>
-        <p className="mt-1 text-[14px] text-stone-500">제목과 내용을 적고 저장 버튼을 누르면 홈페이지에 바로 올라갑니다.</p>
+        <p className="mt-1 text-[16px] leading-7 text-stone-600">제목과 내용을 적고 저장 버튼을 누르면 홈페이지에 바로 올라갑니다.</p>
 
         <form className="mt-5 space-y-5" onSubmit={onSubmit}>
           <div>
-            <label className="mb-2 block text-[15px] font-semibold text-stone-800">제목</label>
+            <label htmlFor="notice-title" className="mb-2 block text-[16px] font-semibold text-stone-800">제목</label>
             <input
+              id="notice-title"
               value={form.title}
               onChange={(e) => setForm((prev) => ({ ...prev, title: e.target.value }))}
               placeholder="예: 설 연휴 휴무 안내"
@@ -144,8 +145,9 @@ export default function AdminNoticesPage() {
           </div>
 
           <div>
-            <label className="mb-2 block text-[15px] font-semibold text-stone-800">내용</label>
+            <label htmlFor="notice-content" className="mb-2 block text-[16px] font-semibold text-stone-800">내용</label>
             <textarea
+              id="notice-content"
               value={form.content}
               onChange={(e) => setForm((prev) => ({ ...prev, content: e.target.value }))}
               rows={6}
@@ -170,8 +172,8 @@ export default function AdminNoticesPage() {
             </ToggleButton>
           </div>
 
-          {error ? <p className="rounded-2xl bg-red-50 px-4 py-3 text-[15px] text-red-700">{error}</p> : null}
-          {message ? <p className="rounded-2xl bg-emerald-50 px-4 py-3 text-[15px] text-emerald-700">{message}</p> : null}
+          {error ? <p role="alert" className="rounded-2xl bg-red-50 px-4 py-3 text-[16px] font-semibold text-red-800">{error}</p> : null}
+          {message ? <p role="status" aria-live="polite" className="rounded-2xl bg-emerald-50 px-4 py-3 text-[16px] font-semibold text-emerald-800">{message}</p> : null}
 
           <div className="flex flex-col gap-2 sm:flex-row">
             <button
@@ -214,19 +216,19 @@ export default function AdminNoticesPage() {
                   <div className="min-w-0">
                     <div className="mb-1 flex flex-wrap items-center gap-1.5">
                       {notice.isPinned ? (
-                        <span className="rounded-full bg-stone-900 px-2 py-0.5 text-[11px] font-semibold text-white">고정</span>
+                        <span className="rounded-full bg-stone-900 px-2.5 py-1 text-[14px] font-semibold text-white">고정</span>
                       ) : null}
                       <span
-                        className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${
-                          notice.isPublished ? 'bg-emerald-100 text-emerald-700' : 'bg-stone-100 text-stone-500'
+                        className={`rounded-full px-2.5 py-1 text-[14px] font-semibold ${
+                          notice.isPublished ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-100 text-[#3f3a36]'
                         }`}
                       >
                         {notice.isPublished ? '보임' : '숨김'}
                       </span>
-                      <span className="text-[12px] text-stone-400">{formatDate(notice.createdAt)}</span>
+                      <span className="text-[15px] text-stone-600">{formatDate(notice.createdAt)}</span>
                     </div>
                     <p className="truncate text-[16px] font-semibold text-stone-950">{notice.title}</p>
-                    <p className="mt-1 line-clamp-2 text-[14px] leading-6 text-stone-500">{notice.content}</p>
+                    <p className="mt-1 line-clamp-2 text-[15px] leading-7 text-stone-600">{notice.content}</p>
                   </div>
                 </div>
                 <div className="mt-3 grid grid-cols-2 gap-2">
@@ -270,6 +272,7 @@ function ToggleButton({
     <button
       type="button"
       onClick={onClick}
+      aria-pressed={active}
       className={`inline-flex min-h-[56px] items-center justify-center gap-1.5 rounded-2xl px-3 text-[15px] font-semibold transition active:translate-y-px ${
         active ? 'bg-stone-900 text-white' : 'border border-stone-300 bg-white text-stone-600'
       }`}
