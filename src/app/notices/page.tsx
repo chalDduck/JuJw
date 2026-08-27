@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
-import { getNotices, getPublicSettings } from '@/lib/db'
+import { getNotices, getPublicSettings } from '@/lib/public-data'
 import { normalizeSiteSettings } from '@/lib/site-settings'
 import BreadcrumbJsonLd from '@/components/seo/BreadcrumbJsonLd'
 import NoticesShell from '@/components/notices/NoticesShell'

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import AboutBrandStoryPage from '@/components/about/AboutBrandStoryPage'
 import BreadcrumbJsonLd from '@/components/seo/BreadcrumbJsonLd'
-import { getPublicSettings } from '@/lib/db'
+import { getPublicSettings } from '@/lib/public-data'
 import { normalizeSiteSettings } from '@/lib/site-settings'
 import { buildPageMetadata } from '@/lib/metadata'
 

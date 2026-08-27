@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { getPublicSettings } from '@/lib/db'
+import { getPublicSettings } from '@/lib/public-data'
 import { normalizeSiteSettings } from '@/lib/site-settings'
 
 export const dynamic = 'force-dynamic'

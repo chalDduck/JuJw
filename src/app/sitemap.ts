@@ -1,6 +1,6 @@
 
 import type { MetadataRoute } from 'next'
-import { getCategories, getNotices, getProducts } from '@/lib/db'
+import { getCategories, getNotices, getProducts } from '@/lib/public-data'
 import { getSiteUrl } from '@/lib/env'
 
 const CONTENT_LAST_MODIFIED = new Date('2026-06-01T00:00:00.000+09:00')

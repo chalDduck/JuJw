@@ -1,6 +1,6 @@
 
 import { NextResponse } from 'next/server'
-import { getProducts } from '@/lib/db'
+import { getProducts } from '@/lib/public-data'
 
 export async function GET(request: Request) {
   const url = new URL(request.url)

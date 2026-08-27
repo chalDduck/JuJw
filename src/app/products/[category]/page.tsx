@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import ProductCatalog from '@/components/products/ProductCatalog'
 import BreadcrumbJsonLd from '@/components/seo/BreadcrumbJsonLd'
-import { getCategories, getCategoryBySlug, getProducts } from '@/lib/db'
+import { getCategories, getCategoryBySlug, getProducts } from '@/lib/public-data'
 import { buildPageMetadata } from '@/lib/metadata'
 
 export const dynamic = 'force-dynamic'

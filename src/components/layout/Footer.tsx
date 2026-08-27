@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { Instagram, MessageCircle } from 'lucide-react'
-import { getPublicSettings } from '@/lib/db'
+import { getPublicSettings } from '@/lib/public-data'
 import { getContactLines, normalizeSiteSettings } from '@/lib/site-settings'
 import { KAKAO_OPENCHAT_URL } from '@/lib/site-links'
 

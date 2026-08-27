@@ -1,6 +1,6 @@
 
 import { NextResponse } from 'next/server'
-import { getNotices } from '@/lib/db'
+import { getNotices } from '@/lib/public-data'
 
 export const dynamic = 'force-dynamic'
 

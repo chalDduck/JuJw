@@ -1,4 +1,4 @@
-import { getProducts, getPublicSettings } from '@/lib/db'
+import { getProducts, getPublicSettings } from '@/lib/public-data'
 import { normalizeSiteSettings } from '@/lib/site-settings'
 import HomeView, { type HomeProduct } from '@/components/home/HomeView'
 import JsonLd from '@/components/seo/JsonLd'

@@ -1,6 +1,6 @@
 import ProductCatalog from '@/components/products/ProductCatalog'
 import BreadcrumbJsonLd from '@/components/seo/BreadcrumbJsonLd'
-import { getCategories, getProducts } from '@/lib/db'
+import { getCategories, getProducts } from '@/lib/public-data'
 import { buildPageMetadata } from '@/lib/metadata'
 
 export const dynamic = 'force-dynamic'

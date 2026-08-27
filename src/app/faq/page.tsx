@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { getPublicSettings } from '@/lib/db'
+import { getPublicSettings } from '@/lib/public-data'
 import { DEFAULT_FAQ_CATEGORIES, parseFaqItems } from '@/lib/faq'
 import BreadcrumbJsonLd from '@/components/seo/BreadcrumbJsonLd'
 import JsonLd from '@/components/seo/JsonLd'
